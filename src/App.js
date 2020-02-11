@@ -18,10 +18,7 @@ class App extends Component {
       .ref()
       .once('value')
       .then(value => {
-        const items = value.toJSON();
-        for (let key in items) {
-          this.state.data[key] = items[key];
-        }
+        this.state.data = value.toJSON();
         this.forceUpdate();
       });
   }
@@ -163,7 +160,6 @@ class App extends Component {
           under the organization you wish to add it under - the button will be
           at the bottom, below all that organization's events.
         </i>
-
         {/* OVERVIEWS */}
         <h1>Overviews</h1>
         {Object.keys(this.state.data['Overviews']).map(org => (
@@ -201,80 +197,87 @@ class App extends Component {
             Add Overview
           </button>
         </div>
-
-        {/* TOP-LEVEL ORGS */}
+        {/* TOP-LEVEL LOCATIONS */}
         {Object.keys(this.state.data)
           .filter(x => x !== 'Overviews')
-          .map(org => (
+          .map(location => (
             <div>
-              <h1>{org}</h1>
-              {/* ORG EVENTS */}
-              {Object.keys(this.state.data[org]).map(index => (
-                <div>
-                  <h2>
-                    <button onClick={() => this.deleteItem(org, index)}>
-                      (X)
-                    </button>
-                    {this.state.data[org][index]['Title']}
-                  </h2>
+            <h1>{location}</h1>
+            {Object.keys(this.state.data[location]).map(org => (
+              <div>
+                <h1>{org}</h1>
+                {/* ORG EVENTS */}
+                {Object.keys(this.state.data[org]).map(index => (
                   <div>
-                    {/* INDIVIDUAL EVENT FIELDS */}
-                    {Object.keys(this.state.data[org][index])
-                      .sort((x, y) => {
-                        return this.getOrderNumber(x) - this.getOrderNumber(y);
-                      })
-                      .map(field => (
-                        <div>
-                          <button
-                            onClick={() => this.deleteItem(org, index, field)}
-                          >
-                            (X)
-                          </button>
-                          <b>{field}: </b>
-                          <textarea
-                            rows={1}
-                            style={{ minWidth: 500 }}
-                            value={this.state.data[org][index][field]}
-                            onChange={evt =>
-                              this.changeItemValue(
-                                org,
-                                field,
-                                evt.target.value,
-                                index
-                              )
-                            }
-                          />
-                        </div>
-                      ))}
-                    <button
-                      style={{ marginTop: 10 }}
-                      onClick={() => {
-                        this.updateFirebase(
-                          this.firebasePath(org, index),
-                          this.state.data[org][index]
-                        );
-                      }}
-                    >
-                      Save
-                    </button>
-                    <button
-                      onClick={() => {
-                        this.addItem(org, index);
-                      }}
-                    >
-                      Add Field
-                    </button>
+                    <h2>
+                      <button onClick={() => this.deleteItem(org, index)}>
+                        (X)
+                      </button>
+                      {this.state.data[org][index]['Title']}
+                    </h2>
+                    <div>
+                      {/* INDIVIDUAL EVENT FIELDS */}
+                      {Object.keys(this.state.data[org][index])
+                        .sort((x, y) => {
+                          return (
+                            this.getOrderNumber(x) - this.getOrderNumber(y)
+                          );
+                        })
+                        .map(field => (
+                          <div>
+                            <button
+                              onClick={() => this.deleteItem(org, index, field)}
+                            >
+                              (X)
+                            </button>
+                            <b>{field}: </b>
+                            <textarea
+                              rows={1}
+                              style={{ minWidth: 500 }}
+                              value={this.state.data[org][index][field]}
+                              onChange={evt =>
+                                this.changeItemValue(
+                                  org,
+                                  field,
+                                  evt.target.value,
+                                  index
+                                )
+                              }
+                            />
+                          </div>
+                        ))}
+                      <button
+                        style={{ marginTop: 10 }}
+                        onClick={() => {
+                          this.updateFirebase(
+                            this.firebasePath(org, index),
+                            this.state.data[org][index]
+                          );
+                        }}
+                      >
+                        Save
+                      </button>
+                      <button
+                        onClick={() => {
+                          this.addItem(org, index);
+                        }}
+                      >
+                        Add Field
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
-              <button
-                style={{ marginTop: 10 }}
-                onClick={() => this.addEvent(org)}
-              >
-                Add Event
-              </button>
+                ))}
+                <button
+                  style={{ marginTop: 10 }}
+                  onClick={() => this.addEvent(org)}
+                >
+                  Add Event
+                </button>
+              </div>
+            ))}
             </div>
-          ))}
+          ))
+        }
       </div>
     ) : (
       <div>
