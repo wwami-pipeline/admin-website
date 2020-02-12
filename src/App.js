@@ -23,8 +23,8 @@ class App extends Component {
       });
   }
 
-  firebasePath = (org, index) => {
-    return '/' + org + '/' + index;
+  firebasePath = (location, org, index) => {
+    return '/' + location + '/' + org + '/' + index;
   };
 
   updateFirebase = (path, content) => {
@@ -61,9 +61,9 @@ class App extends Component {
       });
   };
 
-  addEvent = org => {
-    const index = Object.keys(this.state.data[org]).length;
-    this.state.data[org][index] = {
+  addEvent = (location, org) => {
+    const index = Object.keys(this.state.data[location][org]).length;
+    this.state.data[location][org][index] = {
       Title: '',
       'Sign-up Link': '',
       'Project Description': '',
@@ -84,9 +84,25 @@ class App extends Component {
     this.forceUpdate();
   };
 
-  addItem = (org, index) => {
+  addOrg = location => {
+    const name = prompt('Organization name: ');
+    this.state.data[location][name] = {};
+    this.addEvent(location, name);
+  };
+
+  addLocation = () => {
+    const name = prompt('Location name: ');
+    this.state.data[name] = {};
+    this.addOrg(name);
+  };
+
+  addItem = (location, index, org) => {
     const obj =
-      index == null ? this.state.data[org] : this.state.data[org][index];
+      org != null
+        ? this.state.data[location][org][index]
+        : index != null
+        ? this.state.data[location][index]
+        : this.state.data[location];
 
     const name = prompt('Enter Field Name: ');
     if (Object.keys(obj).includes(name)) {
@@ -97,32 +113,40 @@ class App extends Component {
     }
   };
 
-  deleteItem = (org, index, field) => {
+  deleteItem = (location, org, index, field) => {
     if (field != null) {
-      delete this.state.data[org][index][field];
+      delete this.state.data[location][org][index][field];
     } else {
       // eslint-disable-next-line
       if (confirm('Are you sure you wish to delete this event?')) {
-        delete this.state.data[org][index];
+        delete this.state.data[location][org][index];
         for (
           let i = index + 1;
-          i < Object.keys(this.state.data[org]).length;
+          i < Object.keys(this.state.data[location][org]).length;
           i++
         ) {
-          this.state.data[org][index - 1] = this.state.data[org][index];
+          this.state.data[location][org][index - 1] = this.state.data[location][
+            org
+          ][index];
         }
-        this.updateFirebase('/' + org, this.state.data[org]);
+        this.updateFirebase(
+          '/' + location + '/' + org,
+          this.state.data[location][org]
+        );
       }
     }
 
     this.forceUpdate();
   };
 
-  changeItemValue = (org, title, newVal, index) => {
-    if (index == null) {
-      this.state.data[org][title] = newVal;
+  changeItemValue = (location, title, newVal, org, index) => {
+    if (org == null) {
+      // Overview update
+      this.state.data[location][title] = newVal;
+    } else if (index == null) {
+      this.state.data[location][org][title] = newVal;
     } else {
-      this.state.data[org][index][title] = newVal;
+      this.state.data[location][org][index][title] = newVal;
     }
 
     this.forceUpdate();
@@ -202,82 +226,99 @@ class App extends Component {
           .filter(x => x !== 'Overviews')
           .map(location => (
             <div>
-            <h1>{location}</h1>
-            {Object.keys(this.state.data[location]).map(org => (
-              <div>
-                <h1>{org}</h1>
-                {/* ORG EVENTS */}
-                {Object.keys(this.state.data[org]).map(index => (
-                  <div>
-                    <h2>
-                      <button onClick={() => this.deleteItem(org, index)}>
-                        (X)
-                      </button>
-                      {this.state.data[org][index]['Title']}
-                    </h2>
-                    <div>
-                      {/* INDIVIDUAL EVENT FIELDS */}
-                      {Object.keys(this.state.data[org][index])
-                        .sort((x, y) => {
-                          return (
-                            this.getOrderNumber(x) - this.getOrderNumber(y)
-                          );
-                        })
-                        .map(field => (
-                          <div>
-                            <button
-                              onClick={() => this.deleteItem(org, index, field)}
-                            >
-                              (X)
-                            </button>
-                            <b>{field}: </b>
-                            <textarea
-                              rows={1}
-                              style={{ minWidth: 500 }}
-                              value={this.state.data[org][index][field]}
-                              onChange={evt =>
-                                this.changeItemValue(
-                                  org,
-                                  field,
-                                  evt.target.value,
-                                  index
-                                )
-                              }
-                            />
-                          </div>
-                        ))}
-                      <button
-                        style={{ marginTop: 10 }}
-                        onClick={() => {
-                          this.updateFirebase(
-                            this.firebasePath(org, index),
-                            this.state.data[org][index]
-                          );
-                        }}
-                      >
-                        Save
-                      </button>
-                      <button
-                        onClick={() => {
-                          this.addItem(org, index);
-                        }}
-                      >
-                        Add Field
-                      </button>
+              <h1>{location}</h1>
+              {console.log(this.state.data)}
+              {Object.keys(this.state.data[location]).map(org => (
+                <div style={{ marginLeft: 10 }}>
+                  <h2>{org}</h2>
+                  {/* ORG EVENTS */}
+                  {Object.keys(this.state.data[location][org]).map(index => (
+                    <div style={{ marginLeft: 10 }}>
+                      <h3>
+                        <button
+                          onClick={() => this.deleteItem(location, org, index)}
+                        >
+                          (X)
+                        </button>
+                        {this.state.data[location][org][index]['Title']}
+                      </h3>
+                      <div style={{ marginLeft: 10 }}>
+                        {/* INDIVIDUAL EVENT FIELDS */}
+                        {Object.keys(this.state.data[location][org][index])
+                          .sort((x, y) => {
+                            return (
+                              this.getOrderNumber(x) - this.getOrderNumber(y)
+                            );
+                          })
+                          .map(field => (
+                            <div>
+                              <button
+                                onClick={() =>
+                                  this.deleteItem(location, org, index, field)
+                                }
+                              >
+                                (X)
+                              </button>
+                              <b>{field}: </b>
+                              <textarea
+                                rows={1}
+                                style={{ minWidth: 500 }}
+                                value={
+                                  this.state.data[location][org][index][field]
+                                }
+                                onChange={evt =>
+                                  this.changeItemValue(
+                                    location,
+                                    field,
+                                    evt.target.value,
+                                    org,
+                                    index
+                                  )
+                                }
+                              />
+                            </div>
+                          ))}
+                        <button
+                          style={{ marginTop: 10 }}
+                          onClick={() => {
+                            this.updateFirebase(
+                              this.firebasePath(location, org, index),
+                              this.state.data[location][org][index]
+                            );
+                          }}
+                        >
+                          Save
+                        </button>
+                        <button
+                          onClick={() => {
+                            this.addItem(org, index);
+                          }}
+                        >
+                          Add {this.state.data[location][org][index]['Title']}{' '}
+                          Field
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ))}
-                <button
-                  style={{ marginTop: 10 }}
-                  onClick={() => this.addEvent(org)}
-                >
-                  Add Event
-                </button>
-              </div>
-            ))}
+                  ))}
+                  <button
+                    style={{ marginTop: 10 }}
+                    onClick={() => this.addEvent(location, org)}
+                  >
+                    Add {org} Event
+                  </button>
+                </div>
+              ))}
+              <button
+                style={{ marginTop: 10 }}
+                onClick={() => this.addOrg(location)}
+              >
+                Add {location} Organization
+              </button>
             </div>
-          ))
-        }
+          ))}
+        <button style={{ marginTop: 10 }} onClick={() => this.addLocation()}>
+          Add Location
+        </button>
       </div>
     ) : (
       <div>
