@@ -24,7 +24,13 @@ class App extends Component {
   }
 
   firebasePath = (location, org, index) => {
-    return '/' + location + '/' + org + '/' + index;
+    if (index != undefined) {
+      return '/' + location + '/' + org + '/' + index;
+    }
+    if (org != undefined) {
+      return '/' + location + '/' + org;
+    }
+    return '/' + location;
   };
 
   updateFirebase = (path, content) => {
@@ -62,7 +68,8 @@ class App extends Component {
   };
 
   addEvent = (location, org) => {
-    const index = Object.keys(this.state.data[location][org]).length;
+    const keys = Object.keys(this.state.data[location][org]);
+    const index = keys.length == 0 ? 0 : keys[keys.length - 1] + 1;
     this.state.data[location][org][index] = {
       Title: '',
       'Sign-up Link': '',
@@ -138,6 +145,19 @@ class App extends Component {
 
     this.forceUpdate();
   };
+
+  // fixEventItemsOrdering = (location, org) => {
+  //   const keys = Object.keys(this.state.data[location][org]);
+  //   let temp = {};
+  //   for (let i = 0; i < keys.length; i++) {
+  //     temp[i] = this.state.data[location][org][keys[i]];
+  //   }
+  //   this.state.data[location][org] = temp;
+  //   this.updateFirebase(
+  //     this.firebasePath(location, org),
+  //     this.state.data[location][org]
+  //   );
+  // };
 
   changeItemValue = (location, title, newVal, org, index) => {
     if (org == null) {
