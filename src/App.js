@@ -69,7 +69,7 @@ class App extends Component {
 
   addEvent = (location, org) => {
     const keys = Object.keys(this.state.data[location][org]);
-    const index = keys.length == 0 ? 0 : keys[keys.length - 1] + 1;
+    const index = keys.length == 0 ? 0 : Number(keys[keys.length - 1]) + 1;
     this.state.data[location][org][index] = {
       Title: '',
       'Sign-up Link': '',
@@ -120,6 +120,14 @@ class App extends Component {
     }
   };
 
+  addOverview = org => {
+    const name = prompt('Enter Org Name: ');
+    this.state['Overviews'][name] = {
+      description: '',
+      video: ''
+    };
+  };
+
   deleteItem = (location, org, index, field) => {
     if (field != null) {
       delete this.state.data[location][org][index][field];
@@ -146,18 +154,18 @@ class App extends Component {
     this.forceUpdate();
   };
 
-  // fixEventItemsOrdering = (location, org) => {
-  //   const keys = Object.keys(this.state.data[location][org]);
-  //   let temp = {};
-  //   for (let i = 0; i < keys.length; i++) {
-  //     temp[i] = this.state.data[location][org][keys[i]];
-  //   }
-  //   this.state.data[location][org] = temp;
-  //   this.updateFirebase(
-  //     this.firebasePath(location, org),
-  //     this.state.data[location][org]
-  //   );
-  // };
+  fixEventItemsOrdering = (location, org) => {
+    const keys = Object.keys(this.state.data[location][org]);
+    let temp = {};
+    for (let i = 0; i < keys.length; i++) {
+      temp[i] = this.state.data[location][org][keys[i]];
+    }
+    this.state.data[location][org] = temp;
+    this.updateFirebase(
+      this.firebasePath(location, org),
+      this.state.data[location][org]
+    );
+  };
 
   changeItemValue = (location, title, newVal, org, index) => {
     if (org == null) {
@@ -208,24 +216,29 @@ class App extends Component {
         <h1>Overviews</h1>
         {Object.keys(this.state.data['Overviews']).map(org => (
           <div>
-            <button
-              onClick={() => {
-                // Custom function for overview item deletion
-                delete this.state.data['Overviews'][org];
-                this.forceUpdate();
-              }}
-            >
-              (X)
-            </button>
-            <b>{org}: </b>
-            <textarea
-              rows={1}
-              style={{ minWidth: 500 }}
-              value={this.state.data['Overviews'][org]}
-              onChange={evt =>
-                this.changeItemValue('Overviews', org, evt.target.value)
-              }
-            />
+            <h2>{org}</h2>
+            {Object.keys(this.state.data['Overviews'][org]).map(field => (
+              <div>
+                <button
+                  onClick={() => {
+                    // Custom function for overview item deletion
+                    delete this.state.data['Overviews'][org][field];
+                    this.forceUpdate();
+                  }}
+                >
+                  (X)
+                </button>
+                <b>{org}: </b>
+                <textarea
+                  rows={1}
+                  style={{ minWidth: 500 }}
+                  value={this.state.data['Overviews'][org][field]}
+                  onChange={evt =>
+                    this.changeItemValue('Overviews', field, evt.target.value)
+                  }
+                />
+              </div>
+            ))}
           </div>
         ))}
         <div>
@@ -320,6 +333,12 @@ class App extends Component {
                       </div>
                     </div>
                   ))}
+                  <button
+                    style={{ marginTop: 10 }}
+                    onClick={() => this.fixEventItemsOrdering(location, org)}
+                  >
+                    Fix {org}
+                  </button>
                   <button
                     style={{ marginTop: 10 }}
                     onClick={() => this.addEvent(location, org)}
