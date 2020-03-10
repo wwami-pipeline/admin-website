@@ -62,10 +62,17 @@ const Organization = props => (
       </Button> */}
       <div style={{ marginTop: 20, marginLeft: 10, marginBottom: 10 }}>
         <Button
+        style={{marginRight: 10}}
           variant="contained"
           onClick={() => props.addEvent(props.location, props.org)}
         >
           Add {props.org} Event
+        </Button>
+        <Button
+          variant="contained"
+          onClick={() => props.renameOrg(props.location, props.org)}
+        >
+          Rename {props.org}
         </Button>
       </div>
     </ExpansionPanel>

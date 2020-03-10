@@ -63,6 +63,17 @@ class Admin extends React.Component {
     this.addEvent(location, name);
   };
 
+  renameOrg = (location, org) => {
+    const newName = prompt('New Organization Name: ');
+    this.state.data[location][newName] = this.state.data[location][org];
+    delete this.state.data[location][org];
+    FirebaseHelpers.updateFirebase(
+      FirebaseHelpers.firebasePath(location),
+      this.state.data[location]
+    );
+    this.forceUpdate();
+  };
+
   addLocation = () => {
     const name = prompt('Location name: ');
     this.state.data[name] = {};
@@ -167,7 +178,7 @@ class Admin extends React.Component {
     }
     return (
       <div>
-        <Typography style={{marginTop: 10, marginBottom: '1em'}}>
+        <Typography style={{ marginTop: 10, marginBottom: '1em' }}>
           <i>
             <b>Note:</b> You must press save after editing and adding items for
             changes to take effect.
@@ -187,6 +198,7 @@ class Admin extends React.Component {
               data={this.state.data}
               location={location}
               addOrg={this.addOrg}
+              renameOrg={this.renameOrg}
               getOrderNumber={FirebaseHelpers.getOrderNumber}
               deleteItem={this.deleteItem}
               fixEventItemsOrdering={this.fixEventItemsOrdering}

@@ -45,6 +45,7 @@ const Location = props => (
             deleteItem={props.deleteItem}
             fixEventItemsOrdering={props.fixEventItemsOrdering}
             updateEvent={props.updateEvent}
+            renameOrg={props.renameOrg}
           />
         </div>
       ))}
