@@ -65,13 +65,17 @@ class Admin extends React.Component {
 
   renameOrg = (location, org) => {
     const newName = prompt('New Organization Name: ');
-    this.state.data[location][newName] = this.state.data[location][org];
-    delete this.state.data[location][org];
-    FirebaseHelpers.updateFirebase(
-      FirebaseHelpers.firebasePath(location),
-      this.state.data[location]
-    );
-    this.forceUpdate();
+    if (
+      !(typeof newName === 'undefined' || newName === org || newName === '')
+    ) {
+      this.state.data[location][newName] = this.state.data[location][org];
+      delete this.state.data[location][org];
+      FirebaseHelpers.updateFirebase(
+        FirebaseHelpers.firebasePath(location),
+        this.state.data[location]
+      );
+      this.forceUpdate();
+    }
   };
 
   addLocation = () => {
