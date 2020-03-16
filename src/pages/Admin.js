@@ -29,138 +29,22 @@ class Admin extends React.Component {
     }
   }
 
-  addEvent = (location, org) => {
-    const keys = Object.keys(this.state.data[location][org]);
-    const index = keys.length === 0 ? 0 : Number(keys[keys.length - 1]) + 1;
-
-    this.setState(prevState => {
-      let state = Object.assign({}, prevState);
-      state.data[location][org][index] = {
-        Title: '',
-        'Sign-up Link': '',
-        'Project Description': '',
-        'Types of Volunteers Needed': '',
-        'Clinic Schedule': '',
-        Location: '',
-        'Parking and Directions': '',
-        'Provider Information': '',
-        'HS Grad Student Information': '',
-        'Undergraduate Information': '',
-        'Project Specific Training': '',
-        'Tips and Reminders': '',
-        'Contact Information and Cancellation Policy': '',
-        'Services Provided': '',
-        'Clinic Flow': '',
-        'Website Link': ''
-      };
-      return { state };
-    });
-  };
-
-  addOtherEvent = (location, org) => {
-    const keys = Object.keys(this.state.data[location][org]);
-    const index = keys.length === 0 ? 0 : Number(keys[keys.length - 1]) + 1;
-    this.setState(prevState => {
-      let state = Object.assign({}, prevState);
-      state.data[location][org][index] = {
-        Title: '',
-        'Sign-up Link': '',
-        'Project Description': '',
-        Location: ''
-      };
-      return { state };
-    });
-  };
-
-  addOrg = location => {
-    const name = prompt('Organization name: ');
-    this.state.data[location][name] = {};
-    this.addEvent(location, name);
-  };
-
-  renameOrg = (location, org) => {
-    const newName = prompt('New Organization Name: ');
-    if (
-      !(typeof newName === 'undefined' || newName === org || newName === '')
-    ) {
-      this.state.data[location][newName] = this.state.data[location][org];
-      delete this.state.data[location][org];
-      FirebaseHelpers.updateFirebase(
-        FirebaseHelpers.firebasePath(location),
-        this.state.data[location]
-      );
-      this.forceUpdate();
-    }
-  };
-
   addLocation = () => {
     const name = prompt('Location name: ');
-    this.state.data[name] = {};
-    this.addOrg(name);
-  };
-
-  deleteItem = (location, org, index) => {
-    if (index != null) {
-      // Delete Event
-      if (confirm('Are you sure you wish to delete this event?')) {
-        delete this.state.data[location][org][index];
-        for (
-          let i = index + 1;
-          i < Object.keys(this.state.data[location][org]).length;
-          i++
-        ) {
-          this.state.data[location][org][index - 1] = this.state.data[location][
-            org
-          ][index];
-        }
-        FirebaseHelpers.updateFirebase(
-          '/' + location + '/' + org,
-          this.state.data[location][org]
-        );
-      }
-    } else {
-      if (org != null) {
-        // Delete Org
-        if (confirm('Are you sure you wish to delete this organization?')) {
-          delete this.state.data[location][org];
-          FirebaseHelpers.updateFirebase(
-            '/' + location,
-            this.state.data[location]
-          );
-        }
-      } else {
-        // Delete location
-        if (confirm('Are you sure you wish to delete this location?')) {
-          delete this.state.data[location];
-          FirebaseHelpers.updateFirebase('/', this.state.data);
-        }
-      }
-    }
-
-    this.forceUpdate();
-  };
-
-  fixEventItemsOrdering = (location, org) => {
-    const keys = Object.keys(this.state.data[location][org]);
-    let temp = {};
-    for (let i = 0; i < keys.length; i++) {
-      temp[i] = this.state.data[location][org][keys[i]];
-    }
-    this.state.data[location][org] = temp;
-    FirebaseHelpers.updateFirebase(
-      FirebaseHelpers.firebasePath(location, org),
-      this.state.data[location][org]
-    );
-    this.forceUpdate();
-  };
-
-  updateOverviews = value => {
     this.setState(prevState => {
       let state = Object.assign({}, prevState);
-      state['Overviews'] = value;
+      state.data[name] = {};
       return { state };
     });
-    FirebaseHelpers.updateFirebase('/Overviews', value);
+  };
+
+  deleteLocation = location => {
+    // Delete location
+    if (confirm('Are you sure you wish to delete this location?')) {
+      delete this.state.data[location];
+      FirebaseHelpers.updateFirebase('/', this.state.data);
+    }
+    this.forceUpdate();
   };
 
   render() {
@@ -188,10 +72,7 @@ class Admin extends React.Component {
         </Typography>
 
         {/* OVERVIEWS */}
-        <Overviews
-          data={this.state.data}
-          updateOverviews={this.updateOverviews}
-        />
+        <Overviews data={this.state.data} />
         {/* TOP-LEVEL LOCATIONS */}
         {Object.keys(this.state.data)
           .filter(x => x !== 'Overviews')
@@ -199,13 +80,7 @@ class Admin extends React.Component {
             <Location
               data={this.state.data}
               location={location}
-              addEvent={this.addEvent}
-              addOtherEvent={this.addOtherEvent}
-              addOrg={this.addOrg}
-              renameOrg={this.renameOrg}
-              getOrderNumber={FirebaseHelpers.getOrderNumber}
-              deleteItem={this.deleteItem}
-              fixEventItemsOrdering={this.fixEventItemsOrdering}
+              deleteLocation={this.deleteLocation}
             />
           ))}
         <Button

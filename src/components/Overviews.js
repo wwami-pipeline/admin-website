@@ -1,4 +1,5 @@
 import React from 'react';
+import FirebaseHelpers from '../utils/FirebaseHelpers';
 import {
   Grid,
   IconButton,
@@ -49,6 +50,10 @@ class Overviews extends React.Component {
       Overviews[org][field] = val;
       return { Overviews };
     });
+  };
+
+  updateOverviews = value => {
+    FirebaseHelpers.updateFirebase('/Overviews', this.state.Overviews);
   };
 
   render() {

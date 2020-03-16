@@ -19,7 +19,7 @@ class Event extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      eventItems: props.data[props.location][props.org][props.index]
+      eventItems: props.eventItems
     };
   }
 
@@ -31,7 +31,7 @@ class Event extends React.Component {
     });
   };
 
-  addItem = () => {
+  addField = () => {
     const name = prompt('Enter Field Name: ');
     if (Object.keys(this.state.eventItems).includes(name)) {
       alert('Error: Event already has that field.');
@@ -41,7 +41,7 @@ class Event extends React.Component {
     }
   };
 
-  deleteItem = field => {
+  deleteField = field => {
     this.setState(prevState => {
       let state = Object.assign({}, prevState);
       delete state.eventItems[field];
@@ -78,13 +78,7 @@ class Event extends React.Component {
           >
             <FormControlLabel
               aria-label="Delete Location"
-              onClick={() =>
-                this.props.deleteItem(
-                  this.props.location,
-                  this.props.org,
-                  this.props.index
-                )
-              }
+              onClick={() => this.props.deleteEvent(this.props.index)}
               control={<Delete />}
             />
             <Typography variant="h6">
@@ -96,14 +90,15 @@ class Event extends React.Component {
           {Object.keys(this.state.eventItems)
             .sort((x, y) => {
               return (
-                this.props.getOrderNumber(x) - this.props.getOrderNumber(y)
+                FirebaseHelpers.getOrderNumber(x) -
+                FirebaseHelpers.getOrderNumber(y)
               );
             })
             .map(field => (
               <div>
                 <IconButton
                   style={{ display: 'inline-block' }}
-                  onClick={() => this.deleteItem(field)}
+                  onClick={() => this.deleteField(field)}
                 >
                   <Delete />
                 </IconButton>
@@ -129,7 +124,7 @@ class Event extends React.Component {
             >
               Save
             </Button>
-            <Button variant="contained" onClick={this.addItem}>
+            <Button variant="contained" onClick={this.addField}>
               Add {this.state.eventItems['Title']} Field
             </Button>
           </div>

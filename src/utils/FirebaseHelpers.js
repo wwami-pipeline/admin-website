@@ -12,8 +12,6 @@ export default class FirebaseHelpers {
   };
 
   static updateFirebase = (path, content) => {
-    console.log(path);
-    console.log(content);
     firebase
       .database()
       .ref(path)
@@ -23,6 +21,13 @@ export default class FirebaseHelpers {
           console.error('ERROR. Database write failed: ' + error);
         }
       });
+  };
+
+  static delete = path => {
+    firebase
+      .database()
+      .ref(path)
+      .remove();
   };
 
   static getOrderNumber = x => {
