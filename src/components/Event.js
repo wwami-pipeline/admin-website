@@ -1,4 +1,5 @@
 import React from 'react';
+import FirebaseHelpers from '../utils/FirebaseHelpers';
 import {
   ExpansionPanel,
   ExpansionPanelSummary,
@@ -38,6 +39,25 @@ class Event extends React.Component {
       this.state.eventItems[name] = '';
       this.forceUpdate();
     }
+  };
+
+  deleteItem = field => {
+    this.setState(prevState => {
+      let state = Object.assign({}, prevState);
+      delete state.eventItems[field];
+      return { state };
+    });
+  };
+
+  saveEvent = () => {
+    FirebaseHelpers.updateFirebase(
+      FirebaseHelpers.firebasePath(
+        this.props.location,
+        this.props.org,
+        this.props.index
+      ),
+      this.state.eventItems
+    );
   };
 
   render() {
@@ -83,14 +103,7 @@ class Event extends React.Component {
               <div>
                 <IconButton
                   style={{ display: 'inline-block' }}
-                  onClick={() =>
-                    this.props.deleteItem(
-                      this.props.location,
-                      this.props.org,
-                      this.props.index,
-                      field
-                    )
-                  }
+                  onClick={() => this.deleteItem(field)}
                 >
                   <Delete />
                 </IconButton>
@@ -112,14 +125,7 @@ class Event extends React.Component {
             <Button
               style={{ marginRight: 10 }}
               variant="contained"
-              onClick={() => {
-                this.props.updateEvent(
-                  this.props.location,
-                  this.props.org,
-                  this.props.index,
-                  this.state.eventItems
-                );
-              }}
+              onClick={this.saveEvent}
             >
               Save
             </Button>

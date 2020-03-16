@@ -57,6 +57,21 @@ class Admin extends React.Component {
     });
   };
 
+  addOtherEvent = (location, org) => {
+    const keys = Object.keys(this.state.data[location][org]);
+    const index = keys.length === 0 ? 0 : Number(keys[keys.length - 1]) + 1;
+    this.setState(prevState => {
+      let state = Object.assign({}, prevState);
+      state.data[location][org][index] = {
+        Title: '',
+        'Sign-up Link': '',
+        'Project Description': '',
+        Location: ''
+      };
+      return { state };
+    });
+  };
+
   addOrg = location => {
     const name = prompt('Organization name: ');
     this.state.data[location][name] = {};
@@ -84,45 +99,40 @@ class Admin extends React.Component {
     this.addOrg(name);
   };
 
-  deleteItem = (location, org, index, field) => {
-    if (field != null) {
-      // Delete Field
-      delete this.state.data[location][org][index][field];
+  deleteItem = (location, org, index) => {
+    if (index != null) {
+      // Delete Event
+      if (confirm('Are you sure you wish to delete this event?')) {
+        delete this.state.data[location][org][index];
+        for (
+          let i = index + 1;
+          i < Object.keys(this.state.data[location][org]).length;
+          i++
+        ) {
+          this.state.data[location][org][index - 1] = this.state.data[location][
+            org
+          ][index];
+        }
+        FirebaseHelpers.updateFirebase(
+          '/' + location + '/' + org,
+          this.state.data[location][org]
+        );
+      }
     } else {
-      if (index != null) {
-        // Delete Event
-        if (confirm('Are you sure you wish to delete this event?')) {
-          delete this.state.data[location][org][index];
-          for (
-            let i = index + 1;
-            i < Object.keys(this.state.data[location][org]).length;
-            i++
-          ) {
-            this.state.data[location][org][index - 1] = this.state.data[
-              location
-            ][org][index];
-          }
+      if (org != null) {
+        // Delete Org
+        if (confirm('Are you sure you wish to delete this organization?')) {
+          delete this.state.data[location][org];
           FirebaseHelpers.updateFirebase(
-            '/' + location + '/' + org,
-            this.state.data[location][org]
+            '/' + location,
+            this.state.data[location]
           );
         }
       } else {
-        if (org != null) {
-          // Delete Org
-          if (confirm('Are you sure you wish to delete this organization?')) {
-            delete this.state.data[location][org];
-            FirebaseHelpers.updateFirebase(
-              '/' + location,
-              this.state.data[location]
-            );
-          }
-        } else {
-          // Delete location
-          if (confirm('Are you sure you wish to delete this location?')) {
-            delete this.state.data[location];
-            FirebaseHelpers.updateFirebase('/', this.state.data);
-          }
+        // Delete location
+        if (confirm('Are you sure you wish to delete this location?')) {
+          delete this.state.data[location];
+          FirebaseHelpers.updateFirebase('/', this.state.data);
         }
       }
     }
@@ -142,18 +152,6 @@ class Admin extends React.Component {
       this.state.data[location][org]
     );
     this.forceUpdate();
-  };
-
-  updateEvent = (location, org, index, value) => {
-    this.setState(prevState => {
-      let state = Object.assign({}, prevState);
-      state.data[location][org][index] = value;
-      return { state };
-    });
-    FirebaseHelpers.updateFirebase(
-      FirebaseHelpers.firebasePath(location, org, index),
-      value
-    );
   };
 
   updateOverviews = value => {
@@ -201,12 +199,13 @@ class Admin extends React.Component {
             <Location
               data={this.state.data}
               location={location}
+              addEvent={this.addEvent}
+              addOtherEvent={this.addOtherEvent}
               addOrg={this.addOrg}
               renameOrg={this.renameOrg}
               getOrderNumber={FirebaseHelpers.getOrderNumber}
               deleteItem={this.deleteItem}
               fixEventItemsOrdering={this.fixEventItemsOrdering}
-              updateEvent={this.updateEvent}
             />
           ))}
         <Button
