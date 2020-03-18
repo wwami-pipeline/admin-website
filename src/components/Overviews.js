@@ -52,7 +52,7 @@ class Overviews extends React.Component {
     });
   };
 
-  updateOverviews = value => {
+  updateOverviews = () => {
     FirebaseHelpers.updateFirebase('/Overviews', this.state.Overviews);
   };
 
@@ -131,7 +131,7 @@ class Overviews extends React.Component {
               <Button
                 style={{ marginRight: 5 }}
                 variant="contained"
-                onClick={() => this.props.updateOverviews(this.state.Overviews)}
+                onClick={this.updateOverviews}
               >
                 Save Overviews
               </Button>
