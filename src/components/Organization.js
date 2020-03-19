@@ -65,7 +65,9 @@ class Organization extends React.Component {
         Title: '',
         'Sign-up Link': '',
         'Project Description': '',
-        Location: ''
+        Location: '',
+        Contact: '',
+        Category: ''
       };
       return { state };
     });
