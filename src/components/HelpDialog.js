@@ -102,6 +102,15 @@ export default function HelpDialog() {
             category will be grouped together under a title of the category's
             name. Note that category name and field are both case-sensitive.
           </Typography>
+          <Typography gutterBottom>
+            <b>IMAGES:</b> You can set the images for organizations and events.
+            Clicking "set image" will ask you to upload a file from your
+            computer. The file name must match a certain format with the exact
+            name including capitalization and spaces as well as .jpg extension.
+            Ex: "SHIFA.jpg". You can also view the image, which will either open
+            the current image in a new tab or inform you that no image has been
+            set.
+          </Typography>
         </DialogContent>
       </Dialog>
     </div>
