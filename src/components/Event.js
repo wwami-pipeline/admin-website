@@ -124,10 +124,70 @@ class Event extends React.Component {
             >
               Save
             </Button>
-            <Button variant="contained" onClick={this.addField}>
+            <Button
+              style={{ marginRight: 10 }}
+              variant="contained"
+              onClick={this.addField}
+            >
               Add {this.state.eventItems['Title']} Field
             </Button>
+            <Button
+              style={{ marginRight: 10 }}
+              variant="contained"
+              onClick={() => this.refs.fileUploader.click()}
+            >
+              Set Photo
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => {
+                FirebaseHelpers.getUrl(
+                  '/' +
+                    this.props.location +
+                    '/' +
+                    this.props.org +
+                    '/' +
+                    this.state.eventItems['Title'] +
+                    '.jpg'
+                )
+                  .then(url => {
+                    const win = window.open(url, '_blank');
+                    win.focus();
+                  })
+                  .catch(() => alert('No image set currently.'));
+              }}
+            >
+              View Photo
+            </Button>
           </div>
+          <input
+            type="file"
+            id="file"
+            ref="fileUploader"
+            style={{ display: 'none' }}
+            onChange={evt => {
+              if (
+                evt.target.files[0].name ===
+                this.state.eventItems['Title'] + '.jpg'
+              ) {
+                FirebaseHelpers.uploadFile(
+                  '/' +
+                    this.props.location +
+                    '/' +
+                    this.props.org +
+                    '/' +
+                    evt.target.files[0].name,
+                  evt.target.files[0]
+                );
+              } else {
+                alert(
+                  'ERROR: File name must be ' +
+                    this.state.eventItems['Title'] +
+                    '.jpg'
+                );
+              }
+            }}
+          />
         </ExpansionPanel>
       </div>
     );

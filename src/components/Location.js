@@ -20,7 +20,7 @@ class Location extends React.Component {
     super(props);
     this.state = {
       locationName: props.location,
-      locationData: props.data[props.location]
+      locationData: props.data[props.location],
     };
   }
 

@@ -50,4 +50,25 @@ export default class FirebaseHelpers {
     if (x.toLowerCase().includes('website link')) return 13;
     return 14;
   };
+
+  static uploadFile = (path, file) => {
+    const storageRef = firebase.storage().ref();
+    const ref = storageRef.child(path);
+    ref.put(file).then(function(snapshot) {
+      console.log('Uploaded a blob or file!');
+    });
+  };
+
+  static getUrl = path => {
+    return new Promise((res, err) => {
+      const storageRef = firebase.storage().ref();
+      storageRef
+        .child(path)
+        .getDownloadURL()
+        .then(url => {
+          res(url);
+        })
+        .catch(e => err(e));
+    });
+  };
 }

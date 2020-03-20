@@ -84,7 +84,7 @@ class Organization extends React.Component {
         this.state.orgData
       );
     }
-    this.forceUpdate()
+    this.forceUpdate();
   };
 
   render() {
@@ -105,9 +105,7 @@ class Organization extends React.Component {
           >
             <FormControlLabel
               aria-label="Delete Organization"
-              onClick={() =>
-                this.props.deleteOrg(this.props.org)
-              }
+              onClick={() => this.props.deleteOrg(this.props.org)}
               control={<Delete />}
             />
             <Typography variant="h5">{this.state.orgName}</Typography>
@@ -151,16 +149,59 @@ class Organization extends React.Component {
             {this.state.orgName.toLowerCase() === 'others' ? (
               <div />
             ) : (
-              <Button
-                variant="contained"
-                onClick={() =>
-                  this.props.renameOrg(this.props.location, this.props.org)
-                }
-              >
-                Rename {this.state.orgName}
-              </Button>
+              <div style={{ display: 'inline-block' }}>
+                <Button
+                  style={{ marginRight: 10 }}
+                  variant="contained"
+                  onClick={() =>
+                    this.props.renameOrg(this.props.location, this.props.org)
+                  }
+                >
+                  Rename {this.state.orgName}
+                </Button>
+                <Button
+                  style={{ marginRight: 10 }}
+                  variant="contained"
+                  onClick={() => this.refs.fileUploader.click()}
+                >
+                  Set Photo
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={() => {
+                    FirebaseHelpers.getUrl(
+                      '/' + this.props.location + '/' + this.props.org + '.jpg'
+                    )
+                      .then(url => {
+                        const win = window.open(url, '_blank');
+                        win.focus();
+                      })
+                      .catch(() => alert('No image set currently.'));
+                  }}
+                >
+                  View Photo
+                </Button>
+              </div>
             )}
           </div>
+          {this.state.imageUrl}
+
+          <input
+            type="file"
+            id="file"
+            ref="fileUploader"
+            style={{ display: 'none' }}
+            onChange={evt => {
+              if (evt.target.files[0].name === this.props.org + '.jpg') {
+                FirebaseHelpers.uploadFile(
+                  '/' + this.props.location + '/' + evt.target.files[0].name,
+                  evt.target.files[0]
+                );
+              } else {
+                alert('ERROR: File name must be ' + this.props.org + '.jpg');
+              }
+            }}
+          />
         </ExpansionPanel>
       </div>
     );
