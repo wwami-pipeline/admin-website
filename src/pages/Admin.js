@@ -3,6 +3,7 @@ import FirebaseHelpers from '../utils/FirebaseHelpers';
 import firebase from 'firebase';
 import Location from '../components/Location';
 import Overviews from '../components/Overviews';
+import HelpDialog from '../components/HelpDialog';
 import { Typography, Button } from '@material-ui/core';
 
 /* eslint react/no-direct-mutation-state: "off" */
@@ -70,6 +71,10 @@ class Admin extends React.Component {
             changes to take effect.
           </i>
         </Typography>
+
+        <div style={{ marginBottom: '2em' }}>
+          <HelpDialog />
+        </div>
 
         {/* OVERVIEWS */}
         <Overviews data={this.state.data} />
