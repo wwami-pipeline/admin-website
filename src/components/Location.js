@@ -49,7 +49,7 @@ class Location extends React.Component {
     if (confirm('Are you sure you wish to delete this organization?')) {
       delete this.state.locationData[org];
       FirebaseHelpers.updateFirebase(
-        '/' + this.state.locationName,
+        '/Locations/' + this.state.locationName,
         this.state.locationData
       );
       this.forceUpdate();

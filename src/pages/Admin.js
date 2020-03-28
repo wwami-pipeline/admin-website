@@ -34,7 +34,7 @@ class Admin extends React.Component {
     const name = prompt('Location name: ');
     this.setState(prevState => {
       let state = Object.assign({}, prevState);
-      state.data[name] = {};
+      state.data["Locations"][name] = {};
       return { state };
     });
   };
@@ -42,8 +42,8 @@ class Admin extends React.Component {
   deleteLocation = location => {
     // Delete location
     if (confirm('Are you sure you wish to delete this location?')) {
-      delete this.state.data[location];
-      FirebaseHelpers.updateFirebase('/', this.state.data);
+      delete this.state.data["Locations"][location];
+      FirebaseHelpers.updateFirebase('/Locations', this.state.data["Locations"]);
     }
     this.forceUpdate();
   };
@@ -79,11 +79,10 @@ class Admin extends React.Component {
         {/* OVERVIEWS */}
         <Overviews data={this.state.data} />
         {/* TOP-LEVEL LOCATIONS */}
-        {Object.keys(this.state.data)
-          .filter(x => x !== 'Overviews')
+        {Object.keys(this.state.data["Locations"])
           .map(location => (
             <Location
-              data={this.state.data}
+              data={this.state.data["Locations"]}
               location={location}
               deleteLocation={this.deleteLocation}
             />

@@ -80,7 +80,7 @@ class Organization extends React.Component {
         this.state.orgData[index - 1] = this.state.orgData[index];
       }
       FirebaseHelpers.updateFirebase(
-        '/' + this.props.location + '/' + this.state.orgName,
+        '/Locations/' + this.props.location + '/' + this.state.orgName,
         this.state.orgData
       );
     }

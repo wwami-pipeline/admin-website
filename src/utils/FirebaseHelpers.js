@@ -3,12 +3,12 @@ import firebase from 'firebase';
 export default class FirebaseHelpers {
   static firebasePath = (location, org, index) => {
     if (index !== undefined) {
-      return '/' + location + '/' + org + '/' + index;
+      return '/Locations/' + location + '/' + org + '/' + index;
     }
     if (org !== undefined) {
-      return '/' + location + '/' + org;
+      return '/Locations/' + location + '/' + org;
     }
-    return '/' + location;
+    return '/Locations/' + location;
   };
 
   static updateFirebase = (path, content) => {
