@@ -7,9 +7,9 @@ import {
   Button,
   Typography,
   TextField,
-  IconButton
+  IconButton,
 } from '@material-ui/core';
-
+import DateDialog from './DateDialog';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { Delete } from '@material-ui/icons';
 
@@ -19,12 +19,54 @@ class Event extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      eventItems: props.eventItems
+      dialogOpen: false,
+      eventItems: props.eventItems,
     };
   }
 
+  // Add event calendar occurrence
+  addDate = (rrule) => {
+    if (rrule === undefined || rrule === '') {
+      alert('Invalid date range. Please select a date.');
+    } else {
+      if (this.state.eventItems['Dates']) {
+        const length = Object.keys(this.state.eventItems['Dates']).length;
+        this.state.eventItems['Dates'][length] = rrule;
+      } else {
+        this.state.eventItems['Dates'] = {
+          0: rrule,
+        };
+      }
+      this.forceUpdate();
+    }
+  };
+
+  removeDate = (rrule) => {
+    if (this.state.eventItems['Dates']) {
+      const length = Object.keys(this.state.eventItems['Dates']).length;
+      let currIndex = 0;
+      while (
+        this.state.eventItems['Dates'][currIndex] !== rrule &&
+        currIndex < length
+      ) {
+        currIndex++;
+      }
+      if (currIndex === 0 && length === 1) {
+        delete this.state.eventItems['Dates'];
+      } else {
+        for (let i = currIndex + 1; i < length; i++) {
+          this.state.eventItems['Dates'][i - 1] = this.state.eventItems[
+            'Dates'
+          ][i];
+        }
+        delete this.state.eventItems['Dates'][length - 1];
+      }
+      this.forceUpdate();
+    }
+  };
+
   updateField = (field, val) => {
-    this.setState(prevState => {
+    this.setState((prevState) => {
       let eventItems = Object.assign({}, prevState.eventItems);
       eventItems[field] = val;
       return { eventItems };
@@ -33,7 +75,12 @@ class Event extends React.Component {
 
   addField = () => {
     const name = prompt('Enter Field Name: ');
-    if (Object.keys(this.state.eventItems).includes(name)) {
+    if (name === undefined || name === '' || name === null) {
+      alert('Invalid name. Aborting add.');
+    } else if (
+      Object.keys(this.state.eventItems).includes(name) ||
+      name === 'Dates'
+    ) {
       alert('Error: Event already has that field.');
     } else {
       this.state.eventItems[name] = '';
@@ -41,8 +88,8 @@ class Event extends React.Component {
     }
   };
 
-  deleteField = field => {
-    this.setState(prevState => {
+  deleteField = (field) => {
+    this.setState((prevState) => {
       let state = Object.assign({}, prevState);
       delete state.eventItems[field];
       return { state };
@@ -67,7 +114,7 @@ class Event extends React.Component {
           width: '90%',
           marginLeft: 'auto',
           marginRight: 'auto',
-          marginTop: '1em'
+          marginTop: '1em',
         }}
       >
         <ExpansionPanel>
@@ -88,13 +135,14 @@ class Event extends React.Component {
 
           {/* Map each field in this event*/}
           {Object.keys(this.state.eventItems)
+            .filter((key) => key !== 'Dates')
             .sort((x, y) => {
               return (
                 FirebaseHelpers.getOrderNumber(x) -
                 FirebaseHelpers.getOrderNumber(y)
               );
             })
-            .map(field => (
+            .map((field) => (
               <div>
                 <IconButton
                   style={{ display: 'inline-block' }}
@@ -109,7 +157,9 @@ class Event extends React.Component {
                     multiline
                     fullWidth
                     value={this.state.eventItems[field]}
-                    onChange={evt => this.updateField(field, evt.target.value)}
+                    onChange={(evt) =>
+                      this.updateField(field, evt.target.value)
+                    }
                   />
                 </div>
               </div>
@@ -134,6 +184,13 @@ class Event extends React.Component {
             <Button
               style={{ marginRight: 10 }}
               variant="contained"
+              onClick={() => this.setState({ dialogOpen: true })}
+            >
+              Set Calendar Dates
+            </Button>
+            <Button
+              style={{ marginRight: 10 }}
+              variant="contained"
               onClick={() => this.refs.fileUploader.click()}
             >
               Set Photo
@@ -150,7 +207,7 @@ class Event extends React.Component {
                     this.state.eventItems['Title'] +
                     '.jpg'
                 )
-                  .then(url => {
+                  .then((url) => {
                     const win = window.open(url, '_blank');
                     win.focus();
                   })
@@ -165,30 +222,26 @@ class Event extends React.Component {
             id="file"
             ref="fileUploader"
             style={{ display: 'none' }}
-            onChange={evt => {
-              if (
-                evt.target.files[0].name ===
-                this.state.eventItems['Title'] + '.jpg'
-              ) {
-                FirebaseHelpers.uploadFile(
+            onChange={(evt) => {
+              FirebaseHelpers.uploadFile(
+                '/' +
+                  this.props.location +
                   '/' +
-                    this.props.location +
-                    '/' +
-                    this.props.org +
-                    '/' +
-                    evt.target.files[0].name,
-                  evt.target.files[0]
-                );
-              } else {
-                alert(
-                  'ERROR: File name must be ' +
-                    this.state.eventItems['Title'] +
-                    '.jpg'
-                );
-              }
+                  this.props.org +
+                  '/' +
+                  evt.target.files[0].name,
+                evt.target.files[0]
+              );
             }}
           />
         </ExpansionPanel>
+        <DateDialog
+          open={this.state.dialogOpen}
+          handleClose={() => this.setState({ dialogOpen: false })}
+          dates={this.state.eventItems['Dates']}
+          addDate={this.addDate}
+          removeDate={this.removeDate}
+        />
       </div>
     );
   }
