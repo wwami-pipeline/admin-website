@@ -15,14 +15,14 @@ class Admin extends React.Component {
     this.state = {
       loading: props.data === undefined,
       dialogOpen: false,
-      data: props.data === undefined ? {} : props.data
+      data: props.data === undefined ? {} : props.data,
     };
     if (props.data === undefined) {
       firebase
         .database()
         .ref()
         .once('value')
-        .then(value => {
+        .then((value) => {
           this.state.loading = false;
           this.state.data = value.toJSON();
           this.forceUpdate();
@@ -32,18 +32,21 @@ class Admin extends React.Component {
 
   addLocation = () => {
     const name = prompt('Location name: ');
-    this.setState(prevState => {
+    this.setState((prevState) => {
       let state = Object.assign({}, prevState);
-      state.data["Locations"][name] = {};
+      state.data['Locations'][name] = {};
       return { state };
     });
   };
 
-  deleteLocation = location => {
+  deleteLocation = (location) => {
     // Delete location
     if (confirm('Are you sure you wish to delete this location?')) {
-      delete this.state.data["Locations"][location];
-      FirebaseHelpers.updateFirebase('/Locations', this.state.data["Locations"]);
+      delete this.state.data['Locations'][location];
+      FirebaseHelpers.updateFirebase(
+        '/Locations',
+        this.state.data['Locations']
+      );
     }
     this.forceUpdate();
   };
@@ -53,13 +56,11 @@ class Admin extends React.Component {
       return (
         <div
           style={{
-            textAlgin: 'center',
-            marginLeft: 'auto',
-            marginRight: 'auto',
-            marginTop: '2em'
+            marginLeft: '2em',
+            marginTop: '2em',
           }}
         >
-          <Typography>Loading...</Typography>
+          <Typography variant="h6">Loading...</Typography>
         </div>
       );
     }
@@ -79,14 +80,13 @@ class Admin extends React.Component {
         {/* OVERVIEWS */}
         <Overviews data={this.state.data} />
         {/* TOP-LEVEL LOCATIONS */}
-        {Object.keys(this.state.data["Locations"])
-          .map(location => (
-            <Location
-              data={this.state.data["Locations"]}
-              location={location}
-              deleteLocation={this.deleteLocation}
-            />
-          ))}
+        {Object.keys(this.state.data['Locations']).map((location) => (
+          <Location
+            data={this.state.data['Locations']}
+            location={location}
+            deleteLocation={this.deleteLocation}
+          />
+        ))}
         <Button
           variant="contained"
           style={{ marginTop: '1em' }}

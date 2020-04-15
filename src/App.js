@@ -12,15 +12,23 @@ class App extends Component {
     }
     this.state = {
       data: undefined,
-      isSignedIn: false
+      isSignedIn: false,
     };
     firebase
       .database()
       .ref()
       .once('value')
-      .then(value => {
+      .then((value) => {
         this.state.data = value.toJSON();
       });
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user && user.email === 'slweb@uw.edu') {
+        this.setState({ isSignedIn: true });
+      } else {
+        this.setState({ isSignedIn: false });
+        alert('Error: Unauthorized Email');
+      }
+    });
   }
 
   signIn = () => {
@@ -28,14 +36,7 @@ class App extends Component {
     firebase
       .auth()
       .signInWithPopup(provider)
-      .then(res => {
-        if (res.user.email !== 'slweb@uw.edu') {
-          alert('Error: Unauthorized Email.');
-        } else {
-          this.setState({ isSignedIn: true });
-        }
-      })
-      .catch(function(error) {
+      .catch(function (error) {
         console.log('ERROR: Sign in failed.' + error.code);
       });
   };

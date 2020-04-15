@@ -7,7 +7,7 @@ import {
   ExpansionPanel,
   FormControlLabel,
   ExpansionPanelSummary,
-  Button
+  Button,
 } from '@material-ui/core';
 
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
@@ -21,7 +21,7 @@ class Organization extends React.Component {
     super(props);
     this.state = {
       orgName: props.org,
-      orgData: props.orgData
+      orgData: props.orgData,
     };
     if (this.state.orgData === undefined) {
       this.addEvent();
@@ -32,7 +32,7 @@ class Organization extends React.Component {
     const keys = Object.keys(this.state.orgData);
     const index = keys.length === 0 ? 0 : Number(keys[keys.length - 1]) + 1;
 
-    this.setState(prevState => {
+    this.setState((prevState) => {
       let state = Object.assign({}, prevState);
       state.orgData[index] = {
         Title: '',
@@ -50,7 +50,7 @@ class Organization extends React.Component {
         'Contact Information and Cancellation Policy': '',
         'Services Provided': '',
         'Clinic Flow': '',
-        'Website Link': ''
+        'Website Link': '',
       };
       return { state };
     });
@@ -59,7 +59,7 @@ class Organization extends React.Component {
   addOtherEvent = () => {
     const keys = Object.keys(this.state.orgData);
     const index = keys.length === 0 ? 0 : Number(keys[keys.length - 1]) + 1;
-    this.setState(prevState => {
+    this.setState((prevState) => {
       let state = Object.assign({}, prevState);
       state.orgData[index] = {
         Title: '',
@@ -67,13 +67,13 @@ class Organization extends React.Component {
         'Project Description': '',
         Location: '',
         Contact: '',
-        Category: ''
+        Category: '',
       };
       return { state };
     });
   };
 
-  deleteEvent = index => {
+  deleteEvent = (index) => {
     if (confirm('Are you sure you wish to delete this event?')) {
       delete this.state.orgData[index];
       for (let i = index + 1; i < Object.keys(this.state.orgData).length; i++) {
@@ -88,13 +88,17 @@ class Organization extends React.Component {
   };
 
   render() {
+    if (this.state.orgName !== this.props.org) {
+      this.setState({ orgName: this.props.org, orgData: this.props.orgData });
+      return <div />;
+    }
     return (
       <div
         style={{
           width: '95%',
           marginLeft: 'auto',
           marginRight: 'auto',
-          marginTop: '1em'
+          marginTop: '1em',
         }}
       >
         <ExpansionPanel>
@@ -114,7 +118,7 @@ class Organization extends React.Component {
           <div style={{ marginLeft: 'auto', marginRight: 'auto' }}>
             <Grid container spacing={3}>
               {/* Map each event of this organization */}
-              {Object.keys(this.state.orgData).map(index => (
+              {Object.keys(this.state.orgData).map((index) => (
                 <Event
                   eventItems={this.state.orgData[index]}
                   location={this.props.location}
@@ -153,9 +157,7 @@ class Organization extends React.Component {
                 <Button
                   style={{ marginRight: 10 }}
                   variant="contained"
-                  onClick={() =>
-                    this.props.renameOrg(this.props.location, this.props.org)
-                  }
+                  onClick={() => this.props.renameOrg(this.props.org)}
                 >
                   Rename {this.state.orgName}
                 </Button>
@@ -172,7 +174,7 @@ class Organization extends React.Component {
                     FirebaseHelpers.getUrl(
                       '/' + this.props.location + '/' + this.props.org + '.jpg'
                     )
-                      .then(url => {
+                      .then((url) => {
                         const win = window.open(url, '_blank');
                         win.focus();
                       })
@@ -191,7 +193,7 @@ class Organization extends React.Component {
             id="file"
             ref="fileUploader"
             style={{ display: 'none' }}
-            onChange={evt => {
+            onChange={(evt) => {
               if (evt.target.files[0].name === this.props.org + '.jpg') {
                 FirebaseHelpers.uploadFile(
                   '/' + this.props.location + '/' + evt.target.files[0].name,

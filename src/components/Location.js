@@ -6,7 +6,7 @@ import {
   ExpansionPanelSummary,
   Typography,
   FormControlLabel,
-  Button
+  Button,
 } from '@material-ui/core';
 
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
@@ -30,10 +30,15 @@ class Location extends React.Component {
     this.forceUpdate();
   };
 
-  renameOrg = org => {
+  renameOrg = (org) => {
     const newName = prompt('New Organization Name: ');
     if (
-      !(typeof newName === 'undefined' || newName === org || newName === '')
+      !(
+        typeof newName === 'undefined' ||
+        newName === org ||
+        newName === '' ||
+        Object.keys(this.state.locationData).includes(newName)
+      )
     ) {
       this.state.locationData[newName] = this.state.locationData[org];
       delete this.state.locationData[org];
@@ -42,10 +47,12 @@ class Location extends React.Component {
         this.state.locationData
       );
       this.forceUpdate();
+    } else {
+      alert('Error: invalid name');
     }
   };
 
-  deleteOrg = org => {
+  deleteOrg = (org) => {
     if (confirm('Are you sure you wish to delete this organization?')) {
       delete this.state.locationData[org];
       FirebaseHelpers.updateFirebase(
@@ -63,7 +70,7 @@ class Location extends React.Component {
           width: '95%',
           marginLeft: 'auto',
           marginRight: 'auto',
-          marginTop: '1em'
+          marginTop: '1em',
         }}
       >
         <ExpansionPanel>
@@ -81,7 +88,7 @@ class Location extends React.Component {
           </ExpansionPanelSummary>
 
           {/* Map each organization in this location */}
-          {Object.keys(this.state.locationData).map(org => (
+          {Object.keys(this.state.locationData).map((org) => (
             <div style={{ marginLeft: 10 }}>
               <Organization
                 org={org}
