@@ -2,6 +2,7 @@ import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
+import TextField from '@material-ui/core/TextField';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import MuiDialogContent from '@material-ui/core/DialogContent';
 import IconButton from '@material-ui/core/IconButton';
@@ -52,8 +53,25 @@ const DialogContent = withStyles((theme) => ({
   },
 }))(MuiDialogContent);
 
+const validTime = (time) => {
+  if (time.includes(':')) {
+    const hour = time.split(':')[0];
+    const minute = time.split(':')[1];
+    return (
+      !isNaN(hour) &&
+      !isNaN(minute) &&
+      parseInt(hour) > 0 &&
+      parseInt(minute) >= 0 &&
+      parseInt(minute) < 60
+    );
+  }
+  return false;
+};
+
 export default function HelpDialog(props) {
-  let currDate = '';
+  let currDate = 'RRULE:FREQ=YEARLY;BYMONTH=1;BYMONTHDAY=1';
+  let startTime = '08:00';
+  let duration = '2:00';
 
   return (
     <div>
@@ -80,7 +98,9 @@ export default function HelpDialog(props) {
                   <Delete />
                 </IconButton>
                 <Typography style={{ display: 'inline-block' }}>
-                  {rrulestr(props.dates[index]).toText()}
+                  {rrulestr(props.dates[index].rrule).toText()},{' '}
+                  {'start time: ' + props.dates[index].startTime},{' '}
+                  {'duration: ' + props.dates[index].duration}
                 </Typography>
               </div>
             ))
@@ -93,8 +113,50 @@ export default function HelpDialog(props) {
           <Divider />
 
           {/* RRULE Generator and add button */}
-          <RRuleGenerator onChange={(rrule) => (currDate = rrule)} />
-          <Button variant="contained" onClick={() => props.addDate(currDate)}>
+          <div>
+            <RRuleGenerator onChange={(rrule) => (currDate = rrule)} />
+          </div>
+
+          {/* Time Picker */}
+          <div style={{ marginTop: '1em', marginBottom: '2em' }}>
+            <TextField
+              id="time"
+              label="Start time"
+              type="time"
+              defaultValue="08:00"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              inputProps={{
+                step: 300, // 5 min
+              }}
+              onChange={(val) => {
+                startTime = val.target.value;
+              }}
+            />
+            {/* Duration */}
+            <TextField
+              id="time"
+              label="Duration (HH:MM)"
+              defaultValue="2:00"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              onChange={(val) => (duration = val.target.value)}
+              style={{ marginLeft: '1em' }}
+            />
+          </div>
+
+          <Button
+            variant="contained"
+            onClick={() => {
+              if (validTime(duration)) {
+                props.addDate(currDate, startTime, duration);
+              } else {
+                alert('Invalid duration. Format: HH:MM');
+              }
+            }}
+          >
             Add Date Range
           </Button>
         </DialogContent>

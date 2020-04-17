@@ -25,16 +25,16 @@ class Event extends React.Component {
   }
 
   // Add event calendar occurrence
-  addDate = (rrule) => {
+  addDate = (rrule, startTime, duration) => {
     if (rrule === undefined || rrule === '') {
       alert('Invalid date range. Please select a date.');
     } else {
       if (this.state.eventItems['Dates']) {
         const length = Object.keys(this.state.eventItems['Dates']).length;
-        this.state.eventItems['Dates'][length] = rrule;
+        this.state.eventItems['Dates'][length] = { rrule, startTime, duration };
       } else {
         this.state.eventItems['Dates'] = {
-          0: rrule,
+          0: { rrule, startTime, duration },
         };
       }
       this.forceUpdate();
