@@ -5,6 +5,7 @@ import Location from '../components/Location';
 import Overviews from '../components/Overviews';
 import HelpDialog from '../components/HelpDialog';
 import { Typography, Button } from '@material-ui/core';
+import Prerequisites from '../components/Prerequisites';
 
 /* eslint react/no-direct-mutation-state: "off" */
 /* eslint no-restricted-globals: "off" */
@@ -79,6 +80,8 @@ class Admin extends React.Component {
 
         {/* OVERVIEWS */}
         <Overviews data={this.state.data} />
+        {/* PREREQUISITES */}
+        <Prerequisites prerequisites={this.state.data["Prerequisites"]}/>
         {/* TOP-LEVEL LOCATIONS */}
         {Object.keys(this.state.data['Locations']).map((location) => (
           <Location

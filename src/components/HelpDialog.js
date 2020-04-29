@@ -8,20 +8,20 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 
-const styles = theme => ({
+const styles = (theme) => ({
   root: {
     margin: 0,
-    padding: theme.spacing(2)
+    padding: theme.spacing(2),
   },
   closeButton: {
     position: 'absolute',
     right: theme.spacing(1),
     top: theme.spacing(1),
-    color: theme.palette.grey[500]
-  }
+    color: theme.palette.grey[500],
+  },
 });
 
-const DialogTitle = withStyles(styles)(props => {
+const DialogTitle = withStyles(styles)((props) => {
   const { children, classes, onClose, ...other } = props;
   return (
     <MuiDialogTitle disableTypography className={classes.root} {...other}>
@@ -39,10 +39,10 @@ const DialogTitle = withStyles(styles)(props => {
   );
 });
 
-const DialogContent = withStyles(theme => ({
+const DialogContent = withStyles((theme) => ({
   root: {
-    padding: theme.spacing(2)
-  }
+    padding: theme.spacing(2),
+  },
 }))(MuiDialogContent);
 
 export default function HelpDialog() {
@@ -69,6 +69,15 @@ export default function HelpDialog() {
           Website Instructions
         </DialogTitle>
         <DialogContent dividers>
+          <Typography gutterBottom>
+            <b>OVERVIEWS:</b> You can specify custom overviews for a specific
+            organization here
+          </Typography>
+          <Typography gutterBottom>
+            <b>PREREQUISITES:</b> You can modify the prerequisites for each of
+            the four user types. You are able to add title, paragraphs, and
+            italics - they will show up on the website as their name suggests.
+          </Typography>
           <Typography gutterBottom>
             <b>STRUCTURE:</b> The website is categorized into three layers:
             Locations, Organizations, and Events. There is also a section for
