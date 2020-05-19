@@ -35,8 +35,7 @@ const SignIn = props => (
         <div style={{ marginTop: 100, textAlign: 'right', marginRight: 20 }}>
           <Typography>
             <i>
-              Use slweb@uw.edu to login. All other users are unauthorized
-              currently.
+              Please use a pre-authorized email to login
             </i>
           </Typography>
         </div>

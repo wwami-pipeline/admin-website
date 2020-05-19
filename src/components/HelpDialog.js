@@ -71,7 +71,9 @@ export default function HelpDialog() {
         <DialogContent dividers>
           <Typography gutterBottom>
             <b>OVERVIEWS:</b> You can specify custom overviews for a specific
-            organization here
+            organization here. Overviews are optional - to associate an overview
+            with an organization, the overview and the organization must have
+            the same name.
           </Typography>
           <Typography gutterBottom>
             <b>PREREQUISITES:</b> You can modify the prerequisites for each of
@@ -114,11 +116,11 @@ export default function HelpDialog() {
           <Typography gutterBottom>
             <b>IMAGES:</b> You can set the images for organizations and events.
             Clicking "set image" will ask you to upload a file from your
-            computer. The file name must match a certain format with the exact
-            name including capitalization and spaces as well as .jpg extension.
-            Ex: "SHIFA.jpg". You can also view the image, which will either open
-            the current image in a new tab or inform you that no image has been
-            set.
+            computer. This image must be in JPEG format. You can also view the
+            image, which will either open the current image in a new tab or
+            inform you that no image has been set.{' '}
+            <a href="https://picresize.com/">https://picresize.com/</a> can be
+            used to to crop images to squares and change the image type to JPG.
           </Typography>
         </DialogContent>
       </Dialog>

@@ -22,11 +22,18 @@ class App extends Component {
         this.state.data = value.toJSON();
       });
     firebase.auth().onAuthStateChanged((user) => {
-      if (user && user.email === 'slweb@uw.edu') {
-        this.setState({ isSignedIn: true });
-      } else {
-        this.setState({ isSignedIn: false });
-        alert('Error: Unauthorized Email');
+      if (user) {
+        if (
+          user.email === 'slweb@uw.edu' ||
+          user.email === 'slwebuw@gmail.com'
+        ) {
+          this.setState({ isSignedIn: true });
+        } else {
+          alert(
+            user.email +
+              'is an unauthorized email. Please log in with an authorized email.'
+          );
+        }
       }
     });
   }

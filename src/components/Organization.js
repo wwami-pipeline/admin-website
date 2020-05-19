@@ -194,13 +194,43 @@ class Organization extends React.Component {
             ref="fileUploader"
             style={{ display: 'none' }}
             onChange={(evt) => {
-              if (evt.target.files[0].name === this.props.org + '.jpg') {
+              // Ensure that file name is what is desired
+              const fileName = evt.target.files[0].name;
+              const finalFileName = this.props.org + '.jpg';
+              if (
+                typeof fileName === 'string' &&
+                fileName.substr(fileName.length - 4) === '.jpg'
+              ) {
+                const blob = evt.target.files[0].slice(
+                  0,
+                  evt.target.files[0].size,
+                  'image/jpg'
+                );
+                const fileToUpload = new File([blob], finalFileName, {
+                  type: 'image/jpg',
+                });
                 FirebaseHelpers.uploadFile(
-                  '/' + this.props.location + '/' + evt.target.files[0].name,
-                  evt.target.files[0]
+                  '/' + this.props.location + '/' + finalFileName,
+                  fileToUpload
+                );
+              } else if (
+                typeof fileName === 'string' &&
+                fileName.substr(fileName.length - 5) === '.jpeg'
+              ) {
+                const blob = evt.target.files[0].slice(
+                  0,
+                  evt.target.files[0].size,
+                  'image/jpeg'
+                );
+                const fileToUpload = new File([blob], finalFileName, {
+                  type: 'image/jpg',
+                });
+                FirebaseHelpers.uploadFile(
+                  '/' + this.props.location + '/' + finalFileName,
+                  fileToUpload
                 );
               } else {
-                alert('ERROR: File name must be ' + this.props.org + '.jpg');
+                alert('ERROR: Invalid file type. Must be .jpg. Convert at jpg2png.com');
               }
             }}
           />
