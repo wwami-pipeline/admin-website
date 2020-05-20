@@ -6,6 +6,8 @@ import Overviews from '../components/Overviews';
 import HelpDialog from '../components/HelpDialog';
 import { Typography, Button } from '@material-ui/core';
 import Prerequisites from '../components/Prerequisites';
+import Resources from '../components/Resources';
+import OutsideOrganizations from '../components/OutsideOrganizations'
 
 /* eslint react/no-direct-mutation-state: "off" */
 /* eslint no-restricted-globals: "off" */
@@ -81,7 +83,11 @@ class Admin extends React.Component {
         {/* OVERVIEWS */}
         <Overviews data={this.state.data} />
         {/* PREREQUISITES */}
-        <Prerequisites prerequisites={this.state.data["Prerequisites"]}/>
+        <Prerequisites prerequisites={this.state.data['Prerequisites']} />
+        {/* RESOURCES */}
+        <Resources items={this.state.data['Resources']} />
+        {/* OUTSIDE ORGANIZATIONS (FOR RESOURCES PAGE) */}
+        <OutsideOrganizations items={this.state.data['OutsideOrganizations']} />
         {/* TOP-LEVEL LOCATIONS */}
         {Object.keys(this.state.data['Locations']).map((location) => (
           <Location

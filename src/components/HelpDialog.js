@@ -70,10 +70,31 @@ export default function HelpDialog() {
         </DialogTitle>
         <DialogContent dividers>
           <Typography gutterBottom>
+            <b>STRUCTURE:</b> The website is categorized into three layers:
+            Locations, Organizations, and Events. There is also a section for
+            overviews of each organization. Click on a section to expand it and
+            reveal its child elements.
+          </Typography>
+          <Typography gutterBottom>
             <b>OVERVIEWS:</b> You can specify custom overviews for a specific
             organization here. Overviews are optional - to associate an overview
             with an organization, the overview and the organization must have
-            the same name.
+            the same name. An overview will add a description and optional video
+            to the page of its organization.
+          </Typography>
+          <Typography gutterBottom>
+            <b>RESOURCES:</b> You can modify most of the resources page here.
+            You may add elements of different types and they will appear in
+            top-down order. If you want to add an element between two elements,
+            say elements 5 and 6, you can specify the insert index 6 and it will
+            insert the new element below 5.
+          </Typography>
+          <Typography gutterBottom>
+            <b>OUTSIDE ORGANIZATIONS:</b> Organizations that do not fit the
+            definition of service learning. These will be displayed on the
+            resources page. Information is added the same way as in the
+            resources section. Likewise, links should start with "https://" or
+            "http://" to show up as links on the website.
           </Typography>
           <Typography gutterBottom>
             <b>PREREQUISITES:</b> You can modify the prerequisites for each of
@@ -81,17 +102,11 @@ export default function HelpDialog() {
             italics - they will show up on the website as their name suggests.
           </Typography>
           <Typography gutterBottom>
-            <b>STRUCTURE:</b> The website is categorized into three layers:
-            Locations, Organizations, and Events. There is also a section for
-            overviews of each organization. Click on a section to expand it and
-            reveal its child elements.
-          </Typography>
-          <Typography gutterBottom>
             <b>ADD:</b> There is a button to add a location, organization, and
             event in their respective layer. Events have fields, or information
             associated with the event. Fields will auto-populate when you create
             an event, though you can delete or add new ones through their
-            respecitve buttons (trash can for delete and "Add Field" to add).
+            respective buttons (trash can for delete and "Add Field" to add).
           </Typography>
           <Typography gutterBottom>
             <b>SAVE:</b> To save your changes, press the "save" button in your
