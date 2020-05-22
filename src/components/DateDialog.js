@@ -114,7 +114,10 @@ export default function HelpDialog(props) {
 
           {/* RRULE Generator and add button */}
           <div>
-            <RRuleGenerator onChange={(rrule) => (currDate = rrule)} />
+            <RRuleGenerator
+              config={{ repeat: ['Monthly', 'Weekly', 'Daily'] }}
+              onChange={(rrule) => (currDate = rrule)}
+            />
           </div>
 
           {/* Time Picker */}

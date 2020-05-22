@@ -33,7 +33,7 @@ class Prerequisites extends React.Component {
             aria-controls="panel1a-content"
             id="panel1a-header"
           >
-            <Typography variant="h4">Prerequisites</Typography>
+            <Typography variant="h4">Requirements</Typography>
           </ExpansionPanelSummary>
           {Object.keys(this.state.prerequisites).map((key) => (
             <Prerequisite title={key} items={this.state.prerequisites[key]} />

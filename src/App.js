@@ -12,6 +12,7 @@ class App extends Component {
     }
     this.state = {
       data: undefined,
+      email: "",
       isSignedIn: false,
     };
     firebase
@@ -27,7 +28,7 @@ class App extends Component {
           user.email === 'slweb@uw.edu' ||
           user.email === 'slwebuw@gmail.com'
         ) {
-          this.setState({ isSignedIn: true });
+          this.setState({ isSignedIn: true, email: user.email });
         } else {
           alert(
             user.email +
@@ -50,7 +51,7 @@ class App extends Component {
 
   render() {
     return this.state.isSignedIn ? (
-      <Admin data={this.state.data} />
+      <Admin data={this.state.data} email={this.state.email}/>
     ) : (
       <SignIn signIn={this.signIn} />
     );

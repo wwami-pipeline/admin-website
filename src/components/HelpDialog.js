@@ -71,55 +71,36 @@ export default function HelpDialog() {
         <DialogContent dividers>
           <Typography gutterBottom>
             <b>STRUCTURE:</b> The website is categorized into three layers:
-            Locations, Organizations, and Events. There is also a section for
-            overviews of each organization. Click on a section to expand it and
-            reveal its child elements.
+            Locations, Organizations, and Subprojects. There is also a section
+            for overviews of each organization. Click on a section to expand it
+            and reveal its child elements.
           </Typography>
           <Typography gutterBottom>
-            <b>OVERVIEWS:</b> You can specify custom overviews for a specific
-            organization here. Overviews are optional - to associate an overview
-            with an organization, the overview and the organization must have
-            the same name. An overview will add a description and optional video
-            to the page of its organization.
-          </Typography>
-          <Typography gutterBottom>
-            <b>RESOURCES:</b> You can modify most of the resources page here.
-            You may add elements of different types and they will appear in
-            top-down order. If you want to add an element between two elements,
-            say elements 5 and 6, you can specify the insert index 6 and it will
-            insert the new element below 5.
-          </Typography>
-          <Typography gutterBottom>
-            <b>OUTSIDE ORGANIZATIONS:</b> Organizations that do not fit the
-            definition of service learning. These will be displayed on the
-            resources page. Information is added the same way as in the
-            resources section. Likewise, links should start with "https://" or
-            "http://" to show up as links on the website.
-          </Typography>
-          <Typography gutterBottom>
-            <b>PREREQUISITES:</b> You can modify the prerequisites for each of
-            the four user types. You are able to add title, paragraphs, and
-            italics - they will show up on the website as their name suggests.
+            <b>OVERVIEWS:</b> An overview will add a description and optional
+            video to the page of its organization. Overviews are optional - to
+            associate an overview with an organization, the overview and the
+            organization must have the same name.
           </Typography>
           <Typography gutterBottom>
             <b>ADD:</b> There is a button to add a location, organization, and
-            event in their respective layer. Events have fields, or information
-            associated with the event. Fields will auto-populate when you create
-            an event, though you can delete or add new ones through their
-            respective buttons (trash can for delete and "Add Field" to add).
+            subproject in their respective layer. Events have fields, or
+            information associated with the event. Fields will auto-populate
+            when you create an event, though you can delete or add new ones
+            through their respective buttons (trash can for delete and "Add
+            Field" to add).
           </Typography>
           <Typography gutterBottom>
-            <b>SAVE:</b> To save your changes, press the "save" button in your
-            respective category. Specifically, the save button will be located
-            after each event or overview.
+            <b>SAVE:</b> To save your changes, you must press the "save" button
+            in your respective category. Specifically, the save button will be
+            located after each event or overview. You do not need to save for
+            image updates.
           </Typography>
           <Typography gutterBottom>
             <b>OTHER:</b> Each location can have an organization called
             "Others". This is a special organization that will contain
             miscellaneous events. To add this category to a location, simply add
-            an organization titled "Others" (without the quotation marks, with a
-            capital O). Other events will auto-populate different fields than
-            normal.
+            an organization titled "Others" (without the quotation marks but
+            with a capital "O")
           </Typography>
           <Typography gutterBottom>
             <b>CATEGORY:</b> You can categorize events through the "Category"
@@ -129,10 +110,10 @@ export default function HelpDialog() {
             name. Note that category name and field are both case-sensitive.
           </Typography>
           <Typography gutterBottom>
-            <b>IMAGES:</b> You can set the images for organizations and events.
-            Clicking "set image" will ask you to upload a file from your
-            computer. This image must be in JPEG format. You can also view the
-            image, which will either open the current image in a new tab or
+            <b>IMAGES:</b> You can set the images for organizations and
+            subprojects. Clicking "set image" will ask you to upload a file from
+            your computer. This image must be in JPEG format. You can also view
+            the image, which will either open the current image in a new tab or
             inform you that no image has been set.{' '}
             <a href="https://picresize.com/">https://picresize.com/</a> can be
             used to to crop images to squares and change the image type to JPG.

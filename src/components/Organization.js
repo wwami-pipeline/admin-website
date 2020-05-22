@@ -1,6 +1,6 @@
 import React from 'react';
 import FirebaseHelpers from '../utils/FirebaseHelpers';
-import Event from './Event';
+import SubProject from './SubProject';
 import {
   Grid,
   Typography,
@@ -119,7 +119,7 @@ class Organization extends React.Component {
             <Grid container spacing={3}>
               {/* Map each event of this organization */}
               {Object.keys(this.state.orgData).map((index) => (
-                <Event
+                <SubProject
                   eventItems={this.state.orgData[index]}
                   location={this.props.location}
                   org={this.props.org}
@@ -148,7 +148,7 @@ class Organization extends React.Component {
                   : this.addEvent()
               }
             >
-              Add {this.props.org} Event
+              Add Subproject
             </Button>
             {this.state.orgName.toLowerCase() === 'others' ? (
               <div />
@@ -166,7 +166,7 @@ class Organization extends React.Component {
                   variant="contained"
                   onClick={() => this.refs.fileUploader.click()}
                 >
-                  Set Photo
+                  Set Organization Photo
                 </Button>
                 <Button
                   variant="contained"
@@ -181,7 +181,7 @@ class Organization extends React.Component {
                       .catch(() => alert('No image set currently.'));
                   }}
                 >
-                  View Photo
+                  View Organization Photo
                 </Button>
               </div>
             )}
@@ -230,7 +230,9 @@ class Organization extends React.Component {
                   fileToUpload
                 );
               } else {
-                alert('ERROR: Invalid file type. Must be .jpg. Convert at jpg2png.com');
+                alert(
+                  'ERROR: Invalid file type. Must be .jpg. Convert at jpg2png.com'
+                );
               }
             }}
           />

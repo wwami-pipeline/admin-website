@@ -7,7 +7,7 @@ import HelpDialog from '../components/HelpDialog';
 import { Typography, Button } from '@material-ui/core';
 import Prerequisites from '../components/Prerequisites';
 import Resources from '../components/Resources';
-import OutsideOrganizations from '../components/OutsideOrganizations'
+import OutsideOrganizations from '../components/OutsideOrganizations';
 
 /* eslint react/no-direct-mutation-state: "off" */
 /* eslint no-restricted-globals: "off" */
@@ -55,6 +55,8 @@ class Admin extends React.Component {
   };
 
   render() {
+    const { email } = this.props;
+
     if (this.state.loading) {
       return (
         <div
@@ -82,12 +84,30 @@ class Admin extends React.Component {
 
         {/* OVERVIEWS */}
         <Overviews data={this.state.data} />
+        
         {/* PREREQUISITES */}
-        <Prerequisites prerequisites={this.state.data['Prerequisites']} />
+        {email === 'slweb@uw.edu' ? (
+          <Prerequisites prerequisites={this.state.data['Prerequisites']} />
+        ) : (
+          <div />
+        )}
+
         {/* RESOURCES */}
-        <Resources items={this.state.data['Resources']} />
+        {email === 'slweb@uw.edu' ? (
+          <Resources items={this.state.data['Resources']} />
+        ) : (
+          <div />
+        )}
+
         {/* OUTSIDE ORGANIZATIONS (FOR RESOURCES PAGE) */}
-        <OutsideOrganizations items={this.state.data['OutsideOrganizations']} />
+        {email === 'slweb@uw.edu' ? (
+          <OutsideOrganizations
+            items={this.state.data['OutsideOrganizations']}
+          />
+        ) : (
+          <div />
+        )}
+
         {/* TOP-LEVEL LOCATIONS */}
         {Object.keys(this.state.data['Locations']).map((location) => (
           <Location

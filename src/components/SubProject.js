@@ -15,7 +15,8 @@ import { Delete } from '@material-ui/icons';
 
 /* eslint react/no-direct-mutation-state: "off" */
 
-class Event extends React.Component {
+// NOTE: we refer to sub projects as "events" in the database for simplicity
+class SubProject extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -24,7 +25,7 @@ class Event extends React.Component {
     };
   }
 
-  // Add event calendar occurrence
+  // Add sub project calendar occurrence
   addDate = (rrule, startTime, duration) => {
     if (rrule === undefined || rrule === '') {
       alert('Invalid date range. Please select a date.');
@@ -81,7 +82,7 @@ class Event extends React.Component {
       Object.keys(this.state.eventItems).includes(name) ||
       name === 'Dates'
     ) {
-      alert('Error: Event already has that field.');
+      alert('Error: SubProject already has that field.');
     } else {
       this.state.eventItems[name] = '';
       this.forceUpdate();
@@ -133,37 +134,39 @@ class Event extends React.Component {
             </Typography>
           </ExpansionPanelSummary>
 
-          {/* Map each field in this event*/}
-          {Object.keys(this.state.eventItems)
-            .filter((key) => key !== 'Dates')
-            .sort((x, y) => {
-              return (
-                FirebaseHelpers.getOrderNumber(x) -
-                FirebaseHelpers.getOrderNumber(y)
-              );
-            })
-            .map((field) => (
-              <div>
-                <IconButton
-                  style={{ display: 'inline-block' }}
-                  onClick={() => this.deleteField(field)}
-                >
-                  <Delete />
-                </IconButton>
-                <div style={{ width: '85%', display: 'inline-block' }}>
-                  <TextField
-                    label={field}
-                    variant="outlined"
-                    multiline
-                    fullWidth
-                    value={this.state.eventItems[field]}
-                    onChange={(evt) =>
-                      this.updateField(field, evt.target.value)
-                    }
-                  />
+          <div style={{ maxHeight: 650, overflowY: 'scroll' }}>
+            {/* Map each field in this sub project*/}
+            {Object.keys(this.state.eventItems)
+              .filter((key) => key !== 'Dates')
+              .sort((x, y) => {
+                return (
+                  FirebaseHelpers.getOrderNumber(x) -
+                  FirebaseHelpers.getOrderNumber(y)
+                );
+              })
+              .map((field) => (
+                <div>
+                  <IconButton
+                    style={{ display: 'inline-block' }}
+                    onClick={() => this.deleteField(field)}
+                  >
+                    <Delete />
+                  </IconButton>
+                  <div style={{ width: '85%', display: 'inline-block' }}>
+                    <TextField
+                      label={field}
+                      variant="outlined"
+                      multiline
+                      fullWidth
+                      value={this.state.eventItems[field]}
+                      onChange={(evt) =>
+                        this.updateField(field, evt.target.value)
+                      }
+                    />
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+          </div>
 
           {/* EVENT BUTTONS */}
           <div style={{ marginTop: 20, marginLeft: 10, marginBottom: 10 }}>
@@ -193,7 +196,7 @@ class Event extends React.Component {
               variant="contained"
               onClick={() => this.refs.fileUploader.click()}
             >
-              Set Photo
+              Set Subproject Photo
             </Button>
             <Button
               variant="contained"
@@ -214,7 +217,7 @@ class Event extends React.Component {
                   .catch(() => alert('No image set currently.'));
               }}
             >
-              View Photo
+              View Subproject Photo
             </Button>
           </div>
           <input
@@ -288,4 +291,4 @@ class Event extends React.Component {
   }
 }
 
-export default Event;
+export default SubProject;
