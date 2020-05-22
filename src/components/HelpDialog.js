@@ -87,7 +87,14 @@ export default function HelpDialog() {
             information associated with the event. Fields will auto-populate
             when you create an event, though you can delete or add new ones
             through their respective buttons (trash can for delete and "Add
-            Field" to add).
+            Field" to add).{' '}
+            <b>
+              The "Sign-Up Link" field contains the sign up link for a
+              subproject. It must be a link - you can specify multiple sign-up
+              links by separating them with commas. This sign up link will be
+              used everywhere a user can sign up for this subproject (ex: on any
+              calendar occurrences and in the subproject popup)
+            </b>
           </Typography>
           <Typography gutterBottom>
             <b>SAVE:</b> To save your changes, you must press the "save" button
@@ -117,6 +124,14 @@ export default function HelpDialog() {
             inform you that no image has been set.{' '}
             <a href="https://picresize.com/">https://picresize.com/</a> can be
             used to to crop images to squares and change the image type to JPG.
+          </Typography>
+          <Typography gutterBottom>
+            <b>CALENDAR:</b> You may add calender events under subprojects by
+            clicking the "Set Calendar Dates" button. Here, you may specify the
+            time and occurrence of the event. If you wish for an event to occur
+            only once, simply set the end date to before the start of the next
+            occurrence (ex: set to repeat weekly and end before the start of
+            that week).
           </Typography>
         </DialogContent>
       </Dialog>
