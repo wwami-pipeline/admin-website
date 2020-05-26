@@ -12,6 +12,7 @@
     "react-dom": "^16.13.0",
     "react-rrule-generator": "^1.2.0",
     "react-scripts": "2.1.8",
+    "react-sortablejs": "^2.0.11",
     "rrule": "^2.6.4"
   },
   "scripts": {

@@ -10,6 +10,7 @@ import {
   IconButton,
 } from '@material-ui/core';
 import DateDialog from './DateDialog';
+import SubProjectOrderDialog from './SubProjectOrderDialog';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { Delete } from '@material-ui/icons';
 
@@ -20,9 +21,47 @@ class SubProject extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      dialogOpen: false,
+      dateDialogOpen: false,
+      orderDialogOpen: false,
       eventItems: props.eventItems,
     };
+
+    // Store title and link separately as they are not draggable
+    this.state.title = this.state.eventItems['Title']
+      ? this.state.eventItems['Title']
+      : '';
+    this.state.link = this.state.eventItems['Sign-up Link']
+      ? this.state.eventItems['Sign-up Link']
+      : '';
+    this.state.description = this.state.eventItems['Project Description']
+      ? this.state.eventItems['Project Description']
+      : '';
+
+    this.state.order = [];
+    if (this.state.eventItems['Order']) {
+      Object.keys(this.state.eventItems['Order']).forEach((key) => {
+        this.state.order.push(this.state.eventItems['Order'][key]);
+      });
+    } else {
+      Object.keys(this.state.eventItems)
+        .filter((x) => x !== 'Title' && x !== 'Sign-up Link')
+        .sort((x, y) => {
+          return (
+            FirebaseHelpers.getOrderNumber(x) -
+            FirebaseHelpers.getOrderNumber(y)
+          );
+        })
+        .forEach((key) => {
+          if (key !== 'Dates' && key !== 'Order') {
+            this.state.order.push(key);
+          }
+        });
+    }
+
+    this.state.orderObjArr = [];
+    this.state.order.forEach((item, index) => {
+      this.state.orderObjArr.push({ id: 'id-' + index, name: item });
+    });
   }
 
   // Add sub project calendar occurrence
@@ -98,6 +137,11 @@ class SubProject extends React.Component {
   };
 
   saveEvent = () => {
+    this.state.eventItems['Title'] = this.state.title;
+    this.state.eventItems['Project Description'] = this.state.description;
+    this.state.eventItems['Sign-up Link'] = this.state.link;
+    this.state.eventItems['Order'] = this.state.order;
+
     FirebaseHelpers.updateFirebase(
       FirebaseHelpers.firebasePath(
         this.props.location,
@@ -135,13 +179,66 @@ class SubProject extends React.Component {
           </ExpansionPanelSummary>
 
           <div style={{ maxHeight: 650, overflowY: 'scroll' }}>
+            {/* Display title, sign up link, and project description separately as they are required */}
+            <TextField
+              style={{
+                marginTop: '1em',
+                marginBottom: '1em',
+                width: '90%',
+                marginLeft: '1em',
+              }}
+              label={'Title'}
+              variant="outlined"
+              multiline
+              fullWidth
+              value={this.state.title}
+              onChange={(evt) => {
+                this.setState({ title: evt.target.value });
+              }}
+            />
+            <TextField
+              style={{
+                marginBottom: '1em',
+                width: '90%',
+                marginLeft: '1em',
+              }}
+              label={'Sign-up Link'}
+              variant="outlined"
+              multiline
+              fullWidth
+              value={this.state.link}
+              onChange={(evt) => {
+                this.setState({ link: evt.target.value });
+              }}
+            />
+            <TextField
+              style={{
+                marginBottom: '1em',
+                width: '90%',
+                marginLeft: '1em',
+              }}
+              label={'Project Description'}
+              variant="outlined"
+              multiline
+              fullWidth
+              value={this.state.description}
+              onChange={(evt) => {
+                this.setState({ description: evt.target.value });
+              }}
+            />
+
             {/* Map each field in this sub project*/}
             {Object.keys(this.state.eventItems)
-              .filter((key) => key !== 'Dates')
+              .filter(
+                (key) =>
+                  key !== 'Dates' &&
+                  key !== 'Title' &&
+                  key !== 'Project Description' &&
+                  key !== 'Sign-up Link'
+              )
               .sort((x, y) => {
                 return (
-                  FirebaseHelpers.getOrderNumber(x) -
-                  FirebaseHelpers.getOrderNumber(y)
+                  this.state.order.indexOf(x) - this.state.order.indexOf(y)
                 );
               })
               .map((field) => (
@@ -187,9 +284,16 @@ class SubProject extends React.Component {
             <Button
               style={{ marginRight: 10 }}
               variant="contained"
-              onClick={() => this.setState({ dialogOpen: true })}
+              onClick={() => this.setState({ dateDialogOpen: true })}
             >
               Set Calendar Dates
+            </Button>
+            <Button
+              style={{ marginRight: 10 }}
+              variant="contained"
+              onClick={() => this.setState({ orderDialogOpen: true })}
+            >
+              Change Ordering
             </Button>
             <Button
               style={{ marginRight: 10 }}
@@ -280,11 +384,23 @@ class SubProject extends React.Component {
           />
         </ExpansionPanel>
         <DateDialog
-          open={this.state.dialogOpen}
-          handleClose={() => this.setState({ dialogOpen: false })}
+          open={this.state.dateDialogOpen}
+          handleClose={() => this.setState({ dateDialogOpen: false })}
           dates={this.state.eventItems['Dates']}
           addDate={this.addDate}
           removeDate={this.removeDate}
+        />
+        <SubProjectOrderDialog
+          open={this.state.orderDialogOpen}
+          handleClose={() => this.setState({ orderDialogOpen: false })}
+          orderObjArr={this.state.orderObjArr}
+          updateOrder={(orderObjArr) => {
+            let order = [];
+            orderObjArr.forEach((item) => {
+              order.push(item.name);
+            });
+            this.setState({ orderObjArr, order });
+          }}
         />
       </div>
     );
