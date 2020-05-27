@@ -13,6 +13,7 @@ import DateDialog from './DateDialog';
 import SubProjectOrderDialog from './SubProjectOrderDialog';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { Delete } from '@material-ui/icons';
+import { withSnackbar } from 'notistack';
 
 /* eslint react/no-direct-mutation-state: "off" */
 
@@ -150,6 +151,8 @@ class SubProject extends React.Component {
       ),
       this.state.eventItems
     );
+
+    this.props.enqueueSnackbar('Sub project saved.');
   };
 
   render() {
@@ -407,4 +410,4 @@ class SubProject extends React.Component {
   }
 }
 
-export default SubProject;
+export default withSnackbar(SubProject);

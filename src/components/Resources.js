@@ -12,6 +12,7 @@ import {
 } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { Delete } from '@material-ui/icons';
+import { withSnackbar } from 'notistack';
 
 /* eslint react/no-direct-mutation-state: "off" */
 
@@ -131,7 +132,10 @@ class Resources extends React.Component {
             <Button
               style={{ marginRight: 10 }}
               variant="contained"
-              onClick={this.save}
+              onClick={() => {
+                this.save();
+                this.props.enqueueSnackbar('Resources saved');
+              }}
             >
               Save
             </Button>
@@ -195,4 +199,4 @@ class Resources extends React.Component {
   }
 }
 
-export default Resources;
+export default withSnackbar(Resources);

@@ -41,9 +41,7 @@ class OutsideOrganizations extends React.Component {
             aria-controls="panel1a-content"
             id="panel1a-header"
           >
-            <Typography variant="h4">
-              Outside Organizations (For Resources Page)
-            </Typography>
+            <Typography variant="h4">Outside Organizations</Typography>
           </ExpansionPanelSummary>
           {this.state.locations.map((location) => (
             <OutsideOrganization

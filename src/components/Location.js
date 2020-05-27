@@ -11,6 +11,7 @@ import {
 
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { Delete } from '@material-ui/icons';
+import { withSnackbar } from 'notistack';
 
 /* eslint react/no-direct-mutation-state: "off" */
 /* eslint no-restricted-globals: "off" */
@@ -28,6 +29,9 @@ class Location extends React.Component {
     const name = prompt('Organization name: ');
     this.state.locationData[name] = {};
     this.forceUpdate();
+    this.props.enqueueSnackbar(
+      'Organization added. Please add at least one sub project and save to finalize.'
+    );
   };
 
   renameOrg = (org) => {
@@ -111,4 +115,4 @@ class Location extends React.Component {
   }
 }
 
-export default Location;
+export default withSnackbar(Location);

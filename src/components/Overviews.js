@@ -10,42 +10,46 @@ import {
   ExpansionPanelSummary,
   TextField,
   CardContent,
-  CardHeader
+  CardHeader,
 } from '@material-ui/core';
 
 import { Delete } from '@material-ui/icons';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { withSnackbar } from 'notistack';
 
 class Overviews extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      Overviews: props.data['Overviews']
+      Overviews: props.data['Overviews'],
     };
   }
 
   addOverview = () => {
     const name = prompt('Enter Org Name: ');
-    this.setState(prevState => {
-      let Overviews = Object.assign({}, prevState.Overviews);
-      Overviews[name] = {
-        Description: '',
-        Video: ''
-      };
-      return { Overviews };
-    });
+    if (name && name !== '') {
+      this.setState((prevState) => {
+        let Overviews = Object.assign({}, prevState.Overviews);
+        Overviews[name] = {
+          Description: '',
+          Video: '',
+        };
+        return { Overviews };
+      });
+    }
   };
 
-  deleteOverviewOrg = org => {
-    this.setState(prevState => {
+  deleteOverviewOrg = (org) => {
+    this.setState((prevState) => {
       let Overviews = Object.assign({}, prevState.Overviews);
       delete Overviews[org];
       return { Overviews };
     });
+    this.props.enqueueSnackbar('Overview deleted for ' + org);
   };
 
   changeItemValue = (org, field, val) => {
-    this.setState(prevState => {
+    this.setState((prevState) => {
       let Overviews = Object.assign({}, prevState.Overviews);
       Overviews[org][field] = val;
       return { Overviews };
@@ -63,7 +67,7 @@ class Overviews extends React.Component {
           width: '95%',
           marginLeft: 'auto',
           marginRight: 'auto',
-          flexGrow: 1
+          flexGrow: 1,
         }}
       >
         <ExpansionPanel>
@@ -78,7 +82,7 @@ class Overviews extends React.Component {
             style={{ width: '95%', marginLeft: 'auto', marginRight: 'auto' }}
           >
             <Grid container spacing={3}>
-              {Object.keys(this.state.Overviews).map(org => (
+              {Object.keys(this.state.Overviews).map((org) => (
                 <Grid item xs={3}>
                   <Card
                     variant="outlined"
@@ -87,7 +91,7 @@ class Overviews extends React.Component {
                       maxWidth: 1000,
                       marginLeft: 'auto',
                       marginRight: 'auto',
-                      overflow: 'scroll'
+                      overflow: 'scroll',
                     }}
                   >
                     <CardHeader
@@ -102,13 +106,13 @@ class Overviews extends React.Component {
                       title={<Typography variant="h4">{org}</Typography>}
                     ></CardHeader>
                     <CardContent>
-                      {Object.keys(this.state.Overviews[org]).map(field => (
+                      {Object.keys(this.state.Overviews[org]).map((field) => (
                         <div
                           style={{
                             maxWidth: 900,
                             marginLeft: 'auto',
                             marginRight: 'auto',
-                            marginBottom: '1em'
+                            marginBottom: '1em',
                           }}
                         >
                           <TextField
@@ -116,7 +120,7 @@ class Overviews extends React.Component {
                             multiline
                             fullWidth
                             value={this.state.Overviews[org][field]}
-                            onChange={evt =>
+                            onChange={(evt) =>
                               this.changeItemValue(org, field, evt.target.value)
                             }
                           />
@@ -146,4 +150,4 @@ class Overviews extends React.Component {
   }
 }
 
-export default Overviews;
+export default withSnackbar(Overviews);

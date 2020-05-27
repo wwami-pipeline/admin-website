@@ -12,6 +12,7 @@ import {
 
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { Delete } from '@material-ui/icons';
+import { withSnackbar } from 'notistack';
 
 /* eslint react/no-direct-mutation-state: "off" */
 /* eslint no-restricted-globals: "off" */
@@ -54,6 +55,9 @@ class Organization extends React.Component {
       };
       return { state };
     });
+    this.props.enqueueSnackbar(
+      'Event added. Please set its title, sign-up link, and description.'
+    );
   };
 
   addOtherEvent = () => {
@@ -71,10 +75,12 @@ class Organization extends React.Component {
       };
       return { state };
     });
+    this.props.enqueueSnackbar('Event added under the others section.');
   };
 
   deleteEvent = (index) => {
     if (confirm('Are you sure you wish to delete this event?')) {
+      const oldName = this.state.orgData[index]['Title'];
       delete this.state.orgData[index];
       for (let i = index + 1; i < Object.keys(this.state.orgData).length; i++) {
         this.state.orgData[index - 1] = this.state.orgData[index];
@@ -83,6 +89,7 @@ class Organization extends React.Component {
         '/Locations/' + this.props.location + '/' + this.state.orgName,
         this.state.orgData
       );
+      this.props.enqueueSnackbar('Event ' + oldName + ' deleted');
     }
     this.forceUpdate();
   };
@@ -131,13 +138,6 @@ class Organization extends React.Component {
           </div>
 
           {/* ORGANIZATION BUTTONS */}
-          {/* <Button
-          variant="contained"
-          style={{ marginTop: 10 }}
-          onClick={() => props.fixEventItemsOrdering(props.location, props.org)}
-        >
-          Fix {props.org}
-        </Button> */}
           <div style={{ marginTop: 20, marginLeft: 10, marginBottom: 10 }}>
             <Button
               style={{ marginRight: 10 }}
@@ -229,6 +229,7 @@ class Organization extends React.Component {
                   '/' + this.props.location + '/' + finalFileName,
                   fileToUpload
                 );
+                this.props.enqueueSnackbar('Image uploaded');
               } else {
                 alert(
                   'ERROR: Invalid file type. Must be .jpg. Convert at jpg2png.com'
@@ -242,4 +243,4 @@ class Organization extends React.Component {
   }
 }
 
-export default Organization;
+export default withSnackbar(Organization);
