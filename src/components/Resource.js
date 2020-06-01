@@ -16,10 +16,11 @@ import { withSnackbar } from 'notistack';
 
 /* eslint react/no-direct-mutation-state: "off" */
 
-class Resources extends React.Component {
+class Resource extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      title: this.props.title,
       useCustomIndex: false,
       index: 0,
       items: [],
@@ -77,7 +78,10 @@ class Resources extends React.Component {
   };
 
   save = () => {
-    FirebaseHelpers.updateFirebase('/Resources', this.state.items);
+    FirebaseHelpers.updateFirebase(
+      '/Resources/' + this.state.title + '/',
+      this.state.items
+    );
   };
 
   render() {
@@ -97,7 +101,7 @@ class Resources extends React.Component {
             aria-controls="panel1a-content"
             id="panel1a-header"
           >
-            <Typography variant="h4">Resources</Typography>
+            <Typography variant="h4">{this.state.title}</Typography>
           </ExpansionPanelSummary>
 
           {/* Map each field in this event*/}
@@ -134,7 +138,7 @@ class Resources extends React.Component {
               variant="contained"
               onClick={() => {
                 this.save();
-                this.props.enqueueSnackbar('Resources saved');
+                this.props.enqueueSnackbar('Resource saved');
               }}
             >
               Save
@@ -199,4 +203,4 @@ class Resources extends React.Component {
   }
 }
 
-export default withSnackbar(Resources);
+export default withSnackbar(Resource);

@@ -6,7 +6,7 @@ import Overviews from '../components/Overviews';
 import HelpDialog from '../components/HelpDialog';
 import { Typography, Button } from '@material-ui/core';
 import PrerequisiteTopLevel from '../components/PrerequisiteTopLevel';
-import Resources from '../components/Resources';
+import ResourceTopLevel from '../components/ResourceTopLevel';
 import OutsideOrganizations from '../components/OutsideOrganizations';
 
 /* eslint react/no-direct-mutation-state: "off" */
@@ -96,7 +96,7 @@ class Admin extends React.Component {
 
         {/* RESOURCES */}
         {email === 'slweb@uw.edu' ? (
-          <Resources items={this.state.data['Resources']} />
+          <ResourceTopLevel resources={this.state.data['Resources']} />
         ) : (
           <div />
         )}
