@@ -17,6 +17,7 @@ class Prerequisite extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      location: props.location,
       title: props.title,
       items: [],
     };
@@ -61,7 +62,7 @@ class Prerequisite extends React.Component {
   save = () => {
     if (this.state.title) {
       FirebaseHelpers.updateFirebase(
-        '/Prerequisites/' + this.state.title,
+        '/Prerequisites/' + this.state.location + '/' + this.state.title,
         this.state.items
       );
     }

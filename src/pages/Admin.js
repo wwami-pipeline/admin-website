@@ -5,7 +5,7 @@ import Location from '../components/Location';
 import Overviews from '../components/Overviews';
 import HelpDialog from '../components/HelpDialog';
 import { Typography, Button } from '@material-ui/core';
-import Prerequisites from '../components/Prerequisites';
+import PrerequisiteTopLevel from '../components/PrerequisiteTopLevel';
 import Resources from '../components/Resources';
 import OutsideOrganizations from '../components/OutsideOrganizations';
 
@@ -84,10 +84,12 @@ class Admin extends React.Component {
 
         {/* OVERVIEWS */}
         <Overviews data={this.state.data} />
-        
+
         {/* PREREQUISITES */}
         {email === 'slweb@uw.edu' ? (
-          <Prerequisites prerequisites={this.state.data['Prerequisites']} />
+          <PrerequisiteTopLevel
+            prerequisites={this.state.data['Prerequisites']}
+          />
         ) : (
           <div />
         )}

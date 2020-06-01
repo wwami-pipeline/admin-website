@@ -13,6 +13,7 @@ class Prerequisites extends React.Component {
     super(props);
     this.state = {
       prerequisites: props.prerequisites,
+      location: props.location,
     };
   }
 
@@ -33,10 +34,14 @@ class Prerequisites extends React.Component {
             aria-controls="panel1a-content"
             id="panel1a-header"
           >
-            <Typography variant="h4">Requirements</Typography>
+            <Typography variant="h4">{this.state.location}</Typography>
           </ExpansionPanelSummary>
           {Object.keys(this.state.prerequisites).map((key) => (
-            <Prerequisite title={key} items={this.state.prerequisites[key]} />
+            <Prerequisite
+              title={key}
+              items={this.state.prerequisites[key]}
+              location={this.state.location}
+            />
           ))}
         </ExpansionPanel>
       </div>
