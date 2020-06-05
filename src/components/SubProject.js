@@ -97,9 +97,9 @@ class SubProject extends React.Component {
     } else {
       if (repeatStr === 'daily') {
         repeat = RRule.DAILY;
-      } else if (repeat === 'weekly') {
+      } else if (repeatStr === 'weekly') {
         repeat = RRule.WEEKLY;
-      } else if (repeat === 'monthly') {
+      } else if (repeatStr === 'monthly') {
         repeat = RRule.MONTHLY;
       } else {
         alert('Invalid repeat');
