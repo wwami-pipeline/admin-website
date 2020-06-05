@@ -14,6 +14,7 @@ import SubProjectOrderDialog from './SubProjectOrderDialog';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { Delete } from '@material-ui/icons';
 import { withSnackbar } from 'notistack';
+import RRule from 'rrule';
 
 /* eslint react/no-direct-mutation-state: "off" */
 
@@ -66,20 +67,82 @@ class SubProject extends React.Component {
   }
 
   // Add sub project calendar occurrence
-  addDate = (rrule, startTime, duration) => {
-    if (rrule === undefined || rrule === '') {
-      alert('Invalid date range. Please select a date.');
-    } else {
-      if (this.state.eventItems['Dates']) {
-        const length = Object.keys(this.state.eventItems['Dates']).length;
-        this.state.eventItems['Dates'][length] = { rrule, startTime, duration };
-      } else {
-        this.state.eventItems['Dates'] = {
-          0: { rrule, startTime, duration },
-        };
-      }
-      this.forceUpdate();
+  addDate = (
+    startDate,
+    startTime,
+    duration,
+    endDate,
+    link,
+    repeatStr,
+    weekArray
+  ) => {
+    let repeat = undefined;
+    let neverRepeat = repeatStr === 'never';
+
+    let endDateUsed = endDate;
+    if (!startTime || !(startTime instanceof Date)) {
+      alert('Invalid start time');
+      return;
     }
+
+    let startTimeStr = startTime.getHours() + ':' + startTime.getMinutes();
+
+    if (startDate === undefined || !(startDate instanceof Date)) {
+      alert('Invalid start date');
+      return;
+    }
+    if (repeatStr === 'never') {
+      endDateUsed = new Date(+new Date() + 86400000);
+      repeat = RRule.WEEKLY;
+    } else {
+      if (repeatStr === 'daily') {
+        repeat = RRule.DAILY;
+      } else if (repeat === 'weekly') {
+        repeat = RRule.WEEKLY;
+      } else if (repeat === 'monthly') {
+        repeat = RRule.MONTHLY;
+      } else {
+        alert('Invalid repeat');
+        return;
+      }
+    }
+    if (endDateUsed === undefined || !(endDateUsed instanceof Date)) {
+      alert('Invalid end date');
+      return;
+    }
+
+    const rrule =
+      repeatStr === 'weekly'
+        ? new RRule({
+            freq: repeat,
+            byweekday: weekArray,
+            dtstart: startDate,
+            until: endDate,
+          })
+        : new RRule({ freq: repeat, dtstart: startDate, until: endDate });
+
+    if (this.state.eventItems['Dates']) {
+      const length = Object.keys(this.state.eventItems['Dates']).length;
+      this.state.eventItems['Dates'][length] = {
+        rrule: rrule.toString(),
+        startTime: startTimeStr,
+        duration,
+        link,
+        neverRepeat,
+      };
+    } else {
+      this.state.eventItems['Dates'] = {
+        0: {
+          rrule: rrule.toString(),
+          startTime: startTimeStr,
+          duration,
+          link,
+          neverRepeat,
+        },
+      };
+    }
+    console.log(this.state.eventItems);
+    this.forceUpdate();
   };
 
   removeDate = (rrule) => {
@@ -199,7 +262,7 @@ class SubProject extends React.Component {
                 this.setState({ title: evt.target.value });
               }}
             />
-            <TextField
+            {/* <TextField
               style={{
                 marginBottom: '1em',
                 width: '90%',
@@ -213,7 +276,7 @@ class SubProject extends React.Component {
               onChange={(evt) => {
                 this.setState({ link: evt.target.value });
               }}
-            />
+            /> */}
             <TextField
               style={{
                 marginBottom: '1em',
@@ -237,7 +300,8 @@ class SubProject extends React.Component {
                   key !== 'Dates' &&
                   key !== 'Title' &&
                   key !== 'Project Description' &&
-                  key !== 'Sign-up Link'
+                  key !== 'Sign-up Link' &&
+                  key !== 'Order'
               )
               .sort((x, y) => {
                 return (
@@ -268,14 +332,14 @@ class SubProject extends React.Component {
               ))}
           </div>
 
-          {/* EVENT BUTTONS */}
+          {/* SUBPROJECT BUTTONS */}
           <div style={{ marginTop: 20, marginLeft: 10, marginBottom: 10 }}>
             <Button
               style={{ marginRight: 10 }}
               variant="contained"
               onClick={this.saveEvent}
             >
-              Save
+              <b>Save</b>
             </Button>
             <Button
               style={{ marginRight: 10 }}
@@ -296,7 +360,7 @@ class SubProject extends React.Component {
               variant="contained"
               onClick={() => this.setState({ orderDialogOpen: true })}
             >
-              Change Ordering
+              Change Field Ordering
             </Button>
             <Button
               style={{ marginRight: 10 }}

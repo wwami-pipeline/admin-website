@@ -1,57 +1,43 @@
-import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import TextField from '@material-ui/core/TextField';
-import MuiDialogTitle from '@material-ui/core/DialogTitle';
-import MuiDialogContent from '@material-ui/core/DialogContent';
 import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
-import Typography from '@material-ui/core/Typography';
-import RRuleGenerator from 'react-rrule-generator';
-import { rrulestr } from 'rrule';
-import 'bootstrap/dist/css/bootstrap.css'; // this lib uses boostrap (v. 4.0.0-beta.2)
-import 'react-rrule-generator/build/styles.css'; // react-rrule-generator's custom CSS
 import { Divider } from '@material-ui/core';
 import { Delete } from '@material-ui/icons';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Typography from '@material-ui/core/Typography';
+import withStyles from '@material-ui/core/styles/withStyles';
+import React from 'react';
+import { RRule, rrulestr } from 'rrule';
+import 'date-fns';
+import Grid from '@material-ui/core/Grid';
+import DateFnsUtils from '@date-io/date-fns';
+import {
+  MuiPickersUtilsProvider,
+  KeyboardTimePicker,
+  KeyboardDatePicker,
+} from '@material-ui/pickers';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
 
-const styles = (theme) => ({
-  root: {
-    minWidth: 500,
-    margin: 0,
-    padding: theme.spacing(2),
+const styles = () => ({
+  dialogContent: {
+    height: 500,
   },
-  closeButton: {
-    position: 'absolute',
-    right: theme.spacing(1),
-    top: theme.spacing(1),
-    color: theme.palette.grey[500],
+  dialogBorder: {
+    height: '20px',
+  },
+  title: {
+    marginBottom: '.5em',
   },
 });
-
-const DialogTitle = withStyles(styles)((props) => {
-  const { children, classes, onClose, ...other } = props;
-  return (
-    <MuiDialogTitle disableTypography className={classes.root} {...other}>
-      <Typography variant="h6">{children}</Typography>
-      {onClose ? (
-        <IconButton
-          aria-label="close"
-          className={classes.closeButton}
-          onClick={onClose}
-        >
-          <CloseIcon />
-        </IconButton>
-      ) : null}
-    </MuiDialogTitle>
-  );
-});
-
-const DialogContent = withStyles((theme) => ({
-  root: {
-    padding: theme.spacing(2),
-  },
-}))(MuiDialogContent);
 
 const validTime = (time) => {
   if (time.includes(':')) {
@@ -68,105 +54,335 @@ const validTime = (time) => {
   return false;
 };
 
-export default function HelpDialog(props) {
-  let currDate = 'RRULE:FREQ=YEARLY;BYMONTH=1;BYMONTHDAY=1';
-  let startTime = '08:00';
-  let duration = '2:00';
+class DateDialog extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      startDate: new Date(),
+      startTime: new Date(),
+      endDate: new Date(),
+      duration: '1:00',
+      link: '',
+      repeat: 'never',
+      mChecked: false,
+      tuChecked: false,
+      wChecked: false,
+      thChecked: false,
+      fChecked: false,
+      saChecked: false,
+      suChecked: false,
+    };
+  }
 
-  return (
-    <div>
-      <Dialog
-        onClose={props.handleClose}
-        aria-labelledby="customized-dialog-title"
-        open={props.open}
-        maxWidth="md"
-      >
-        <DialogTitle id="customized-dialog-title" onClose={props.handleClose}>
-          Set Times
-        </DialogTitle>
-
-        <DialogContent dividers>
-          {/* Display current dates set from props */}
-          <Typography variant="h6">Current Times</Typography>
-          {props.dates ? (
-            Object.keys(props.dates).map((index) => (
-              <div>
-                <IconButton
-                  style={{ display: 'inline-block' }}
-                  onClick={() => props.removeDate(props.dates[index])}
-                >
-                  <Delete />
-                </IconButton>
-                <Typography style={{ display: 'inline-block' }}>
-                  {rrulestr(props.dates[index].rrule).toText()},{' '}
-                  {'start time: ' + props.dates[index].startTime},{' '}
-                  {'duration: ' + props.dates[index].duration}
-                </Typography>
-              </div>
-            ))
-          ) : (
-            <Typography>
-              <i>This event has no calendar dates. Add one below.</i>
+  render() {
+    const { classes, dates, removeDate, addDate } = this.props;
+    return (
+      <div>
+        <Dialog
+          open={this.props.open}
+          onClose={this.props.handleClose}
+          fullWidth
+        >
+          <div className={classes.dialogBorder} />
+          <DialogTitle>
+            <Typography variant="h4" className={classes.textCaps}>
+              Calendar Events
             </Typography>
-          )}
+          </DialogTitle>
+          <div className={classes.dialogBody}>
+            <DialogContent className={classes.dialogContent}>
+              {/* Display current dates set from props */}
+              <Typography variant="h6">Current Calendar Events</Typography>
+              {dates ? (
+                Object.keys(dates).map((index) => (
+                  <div>
+                    <IconButton
+                      style={{ display: 'inline-block' }}
+                      onClick={() => removeDate(dates[index])}
+                    >
+                      <Delete />
+                    </IconButton>
+                    <Typography style={{ display: 'inline-block' }}>
+                      {dates[index].neverRepeat
+                        ? 'once on ' +
+                          new Date(rrulestr(dates[index].rrule).all()[0])
+                            .toISOString()
+                            .slice(0, 10)
+                        : rrulestr(dates[index].rrule).toText()}
+                      , {'start time: ' + dates[index].startTime},{' '}
+                      {'duration: ' + dates[index].duration},
+                      {'sign-up link: ' +
+                        (!dates[index].link || dates[index].link === ''
+                          ? 'none'
+                          : dates[index].link)}
+                    </Typography>
+                  </div>
+                ))
+              ) : (
+                <Typography>
+                  <i>This event has no calendar dates. Add one below.</i>
+                </Typography>
+              )}
 
-          <Divider />
+              <Divider />
 
-          {/* RRULE Generator and add button */}
-          <div>
-            <RRuleGenerator
-              config={{
-                repeat: ['Monthly', 'Weekly', 'Daily'],
-                hideStart: false,
-              }}
-              onChange={(rrule) => (currDate = rrule)}
-            />
+              {/* Section to add new calendar events */}
+
+              <div style={{ marginTop: '1em' }}>
+                <Typography variant="h6" gutterBottom>
+                  Add a new calendar event
+                </Typography>
+                <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                  <Grid container justify="space-around">
+                    <KeyboardDatePicker
+                      disableToolbar
+                      variant="inline"
+                      format="MM/dd/yyyy"
+                      margin="normal"
+                      id="date-picker-inline"
+                      label="Start Date"
+                      value={this.state.startDate}
+                      onChange={(val) => this.setState({ startDate: val })}
+                      KeyboardButtonProps={{
+                        'aria-label': 'change start date',
+                      }}
+                    />
+                    <KeyboardTimePicker
+                      margin="normal"
+                      variant="inline"
+                      id="time-picker"
+                      label="Start Time"
+                      value={this.state.startTime}
+                      onChange={(val) => this.setState({ startTime: val })}
+                      KeyboardButtonProps={{
+                        'aria-label': 'change start time',
+                      }}
+                    />
+                  </Grid>
+                </MuiPickersUtilsProvider>
+
+                <div style={{ marginTop: '1em', marginBottom: '1em' }}>
+                  {/* Duration */}
+                  <TextField
+                    id="time"
+                    label="Duration (HH:MM)"
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    value={this.state.duration}
+                    onChange={(val) =>
+                      this.setState({ duration: val.target.value })
+                    }
+                    style={{ marginLeft: '1em' }}
+                  />
+                  {/* Duration */}
+                  <TextField
+                    label="Sign-Up Link"
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    value={this.state.link}
+                    onChange={(val) =>
+                      this.setState({ link: val.target.value })
+                    }
+                    style={{ marginLeft: '1em' }}
+                  />
+
+                  <FormControl
+                    className={classes.formControl}
+                    style={{ marginLeft: '1em' }}
+                  >
+                    <InputLabel id="repeat-input-label">Repeat</InputLabel>
+                    <Select
+                      labelId="repeat-select-label"
+                      id="repeat-select"
+                      value={this.state.repeat}
+                      onChange={(e) =>
+                        this.setState({ repeat: e.target.value })
+                      }
+                    >
+                      <MenuItem value={'never'}>Never</MenuItem>
+                      <MenuItem value={'daily'}>Daily</MenuItem>
+                      <MenuItem value={'weekly'}>Weekly</MenuItem>
+                      <MenuItem value={'monthly'}>Monthly</MenuItem>
+                    </Select>
+                  </FormControl>
+                </div>
+              </div>
+
+              {this.state.repeat !== 'never' ? (
+                <div>
+                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                    <Grid container justify="space-around">
+                      <KeyboardDatePicker
+                        disableToolbar
+                        variant="inline"
+                        format="MM/dd/yyyy"
+                        margin="normal"
+                        id="date-picker-inline"
+                        label="Repeat Until"
+                        value={this.state.endDate}
+                        onChange={(val) => this.setState({ endDate: val })}
+                        KeyboardButtonProps={{
+                          'aria-label': 'change end date',
+                        }}
+                      />
+                    </Grid>
+                  </MuiPickersUtilsProvider>
+
+                  {this.state.repeat === 'weekly' ? (
+                    <div>
+                      <FormGroup row>
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              checked={this.state.mChecked}
+                              onChange={() =>
+                                this.setState({
+                                  mChecked: !this.state.mChecked,
+                                })
+                              }
+                              name="mondayCheckbox"
+                            />
+                          }
+                          label="M"
+                        />
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              checked={this.state.tuChecked}
+                              onChange={() =>
+                                this.setState({
+                                  tuChecked: !this.state.tuChecked,
+                                })
+                              }
+                              name="mondayCheckbox"
+                            />
+                          }
+                          label="Tu"
+                        />
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              checked={this.state.wChecked}
+                              onChange={() =>
+                                this.setState({
+                                  wChecked: !this.state.wChecked,
+                                })
+                              }
+                              name="wCheckbox"
+                            />
+                          }
+                          label="W"
+                        />
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              checked={this.state.thChecked}
+                              onChange={() =>
+                                this.setState({
+                                  thChecked: !this.state.thChecked,
+                                })
+                              }
+                              name="thCheckbox"
+                            />
+                          }
+                          label="Th"
+                        />
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              checked={this.state.fChecked}
+                              onChange={() =>
+                                this.setState({
+                                  fChecked: !this.state.fChecked,
+                                })
+                              }
+                              name="fCheckbox"
+                            />
+                          }
+                          label="F"
+                        />
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              checked={this.state.saChecked}
+                              onChange={() =>
+                                this.setState({
+                                  saChecked: !this.state.saChecked,
+                                })
+                              }
+                              name="saCheckbox"
+                            />
+                          }
+                          label="Sa"
+                        />
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              checked={this.state.suChecked}
+                              onChange={() =>
+                                this.setState({
+                                  suChecked: !this.state.suChecked,
+                                })
+                              }
+                              name="suCheckbox"
+                            />
+                          }
+                          label="Su"
+                        />
+                      </FormGroup>
+                    </div>
+                  ) : (
+                    <div />
+                  )}
+                </div>
+              ) : (
+                <div />
+              )}
+
+              <Button
+                variant="contained"
+                onClick={() => {
+                  if (validTime(this.state.duration)) {
+                    // Get array of repeat days for weekly
+                    let repeatDays = [];
+                    if (this.state.mChecked) repeatDays.push(RRule.MO);
+                    if (this.state.tuChecked) repeatDays.push(RRule.TU);
+                    if (this.state.wChecked) repeatDays.push(RRule.WE);
+                    if (this.state.tuChecked) repeatDays.push(RRule.TH);
+                    if (this.state.fChecked) repeatDays.push(RRule.FR);
+                    if (this.state.saChecked) repeatDays.push(RRule.SA);
+                    if (this.state.suChecked) repeatDays.push(RRule.SU);
+
+                    addDate(
+                      this.state.startDate,
+                      this.state.startTime,
+                      this.state.duration,
+                      this.state.endDate,
+                      this.state.link,
+                      this.state.repeat,
+                      repeatDays
+                    );
+                  } else {
+                    alert('Invalid duration. Format: HH:MM');
+                  }
+                }}
+              >
+                Add Calendar Event
+              </Button>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={this.props.handleClose} variant="outlined">
+                Close
+              </Button>
+            </DialogActions>
           </div>
-
-          {/* Time Picker */}
-          <div style={{ marginTop: '1em', marginBottom: '2em' }}>
-            <TextField
-              id="time"
-              label="Start time"
-              type="time"
-              defaultValue="08:00"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              inputProps={{
-                step: 300, // 5 min
-              }}
-              onChange={(val) => {
-                startTime = val.target.value;
-              }}
-            />
-            {/* Duration */}
-            <TextField
-              id="time"
-              label="Duration (HH:MM)"
-              defaultValue="2:00"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              onChange={(val) => (duration = val.target.value)}
-              style={{ marginLeft: '1em' }}
-            />
-          </div>
-
-          <Button
-            variant="contained"
-            onClick={() => {
-              if (validTime(duration)) {
-                props.addDate(currDate, startTime, duration);
-              } else {
-                alert('Invalid duration. Format: HH:MM');
-              }
-            }}
-          >
-            Add Date Range
-          </Button>
-        </DialogContent>
-      </Dialog>
-    </div>
-  );
+          <div className={classes.dialogBorder} />
+        </Dialog>
+      </div>
+    );
+  }
 }
+
+export default withStyles(styles)(DateDialog);
