@@ -12,7 +12,7 @@ class App extends Component {
     }
     this.state = {
       data: undefined,
-      email: "",
+      email: '',
       isSignedIn: false,
     };
     firebase
@@ -40,7 +40,11 @@ class App extends Component {
   }
 
   signIn = () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
+    const provider = new firebase.auth.OAuthProvider('microsoft.com');
+    provider.setCustomParameters({
+      // Target specific email with login hint.
+      login_hint: 'netid@uw.edu',
+    });
     firebase
       .auth()
       .signInWithPopup(provider)
@@ -51,7 +55,7 @@ class App extends Component {
 
   render() {
     return this.state.isSignedIn ? (
-      <Admin data={this.state.data} email={this.state.email}/>
+      <Admin data={this.state.data} email={this.state.email} />
     ) : (
       <SignIn signIn={this.signIn} />
     );
