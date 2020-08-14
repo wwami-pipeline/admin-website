@@ -84,9 +84,6 @@ class SubProject extends React.Component {
       alert('Invalid start time');
       return;
     }
-
-    let startTimeStr = startTime.getHours() + ':' + startTime.getMinutes();
-
     if (startDate === undefined || !(startDate instanceof Date)) {
       alert('Invalid start date');
       return;
@@ -111,6 +108,9 @@ class SubProject extends React.Component {
       return;
     }
 
+    startDate.setHours(startTime.getHours() - 7);
+    startDate.setMinutes(startTime.getMinutes());
+
     const rrule =
       repeatStr === 'weekly'
         ? new RRule({
@@ -125,7 +125,6 @@ class SubProject extends React.Component {
       const length = Object.keys(this.state.eventItems['Dates']).length;
       this.state.eventItems['Dates'][length] = {
         rrule: rrule.toString(),
-        startTime: startTimeStr,
         duration,
         link,
         neverRepeat,
@@ -134,7 +133,6 @@ class SubProject extends React.Component {
       this.state.eventItems['Dates'] = {
         0: {
           rrule: rrule.toString(),
-          startTime: startTimeStr,
           duration,
           link,
           neverRepeat,

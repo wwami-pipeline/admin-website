@@ -109,7 +109,7 @@ class DateDialog extends React.Component {
                             .toISOString()
                             .slice(0, 10)
                         : rrulestr(dates[index].rrule).toText()}
-                      , {'start time: ' + dates[index].startTime},{' '}
+                      , {'start date: ' + dates[index].startDate},{' '}
                       {'duration: ' + dates[index].duration},
                       {'sign-up link: ' +
                         (!dates[index].link || dates[index].link === ''
