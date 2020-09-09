@@ -107,10 +107,13 @@ class DateDialog extends React.Component {
                         ? 'once on ' +
                           new Date(rrulestr(dates[index].rrule).all()[0])
                             .toISOString()
-                            .slice(0, 10)
+                            .slice(0, 10) +
+                          ' at ' +
+                          new Date(rrulestr(dates[index].rrule).all()[0])
+                            .toTimeString()
+                            .slice(0, 5)
                         : rrulestr(dates[index].rrule).toText()}
-                      , {'start date: ' + dates[index].startDate},{' '}
-                      {'duration: ' + dates[index].duration},
+                      , {'duration: ' + dates[index].duration},{' '}
                       {'sign-up link: ' +
                         (!dates[index].link || dates[index].link === ''
                           ? 'none'

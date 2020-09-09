@@ -34,30 +34,17 @@ class App extends Component {
             user.email +
               'is an unauthorized email. Please log in with an authorized email.'
           );
+          firebase.auth().signOut();
         }
       }
     });
   }
 
-  signIn = () => {
-    const provider = new firebase.auth.OAuthProvider('microsoft.com');
-    provider.setCustomParameters({
-      // Target specific email with login hint.
-      login_hint: 'netid@uw.edu',
-    });
-    firebase
-      .auth()
-      .signInWithPopup(provider)
-      .catch(function (error) {
-        console.log('ERROR: Sign in failed.' + error.code);
-      });
-  };
-
   render() {
     return this.state.isSignedIn ? (
       <Admin data={this.state.data} email={this.state.email} />
     ) : (
-      <SignIn signIn={this.signIn} />
+      <SignIn />
     );
   }
 }

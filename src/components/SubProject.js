@@ -90,7 +90,7 @@ class SubProject extends React.Component {
     }
     if (repeatStr === 'never') {
       endDateUsed = new Date(+new Date() + 86400000);
-      repeat = RRule.WEEKLY;
+      repeat = RRule.YEARLY;
     } else {
       if (repeatStr === 'daily') {
         repeat = RRule.DAILY;
@@ -108,7 +108,7 @@ class SubProject extends React.Component {
       return;
     }
 
-    startDate.setHours(startTime.getHours() - 7);
+    startDate.setHours(startTime.getHours());
     startDate.setMinutes(startTime.getMinutes());
 
     const rrule =
@@ -117,9 +117,9 @@ class SubProject extends React.Component {
             freq: repeat,
             byweekday: weekArray,
             dtstart: startDate,
-            until: endDate,
+            until: endDateUsed,
           })
-        : new RRule({ freq: repeat, dtstart: startDate, until: endDate });
+        : new RRule({ freq: repeat, dtstart: startDate, until: endDateUsed });
 
     if (this.state.eventItems['Dates']) {
       const length = Object.keys(this.state.eventItems['Dates']).length;
