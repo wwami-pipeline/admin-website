@@ -123,8 +123,6 @@ class SubProject extends React.Component {
           })
         : new RRule({ freq: repeat, dtstart: startDate, until: endDateUsed });
 
-    alert(rrule.toString());
-
     if (this.state.eventItems['Dates']) {
       const length = Object.keys(this.state.eventItems['Dates']).length;
       this.state.eventItems['Dates'][length] = {

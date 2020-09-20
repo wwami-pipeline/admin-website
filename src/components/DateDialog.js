@@ -95,32 +95,41 @@ class DateDialog extends React.Component {
               {/* Display current dates set from props */}
               <Typography variant="h6">Current Calendar Events</Typography>
               {dates ? (
-                Object.keys(dates).map((index) => (
-                  <div>
-                    <IconButton
-                      style={{ display: 'inline-block' }}
-                      onClick={() => removeDate(dates[index])}
-                    >
-                      <Delete />
-                    </IconButton>
-                    <Typography style={{ display: 'inline-block' }}>
-                      {dates[index].neverRepeat
-                        ? 'once on ' +
-                          new Date(rrulestr(dates[index].rrule).all()[0])
-                            .toISOString()
-                            .slice(0, 10)
-                        : rrulestr(dates[index].rrule).toText()}
-                      {dates[index].startTime
-                        ? ', start time: ' + dates[index].startTime
-                        : ''}
-                      , {'duration: ' + dates[index].duration},{' '}
-                      {'sign-up link: ' +
-                        (!dates[index].link || dates[index].link === ''
-                          ? 'none'
-                          : dates[index].link)}
-                    </Typography>
-                  </div>
-                ))
+                Object.keys(dates).map((index) =>
+                  dates[index] && dates[index].rrule ? (
+                    <div>
+                      <IconButton
+                        style={{ display: 'inline-block' }}
+                        onClick={() => removeDate(dates[index])}
+                      >
+                        <Delete />
+                      </IconButton>
+                      <Typography style={{ display: 'inline-block' }}>
+                        {dates[index].neverRepeat
+                          ? 'once on ' +
+                            new Date(
+                              rrulestr(dates[index].rrule)
+                                .all()[0]
+                                .toISOString()
+                                .slice(0, 10)
+                            )
+                              .toISOString()
+                              .slice(0, 10)
+                          : rrulestr(dates[index].rrule).toText()}
+                        {dates[index].startTime
+                          ? ', start time: ' + dates[index].startTime
+                          : ''}
+                        , {'duration: ' + dates[index].duration},{' '}
+                        {'sign-up link: ' +
+                          (!dates[index].link || dates[index].link === ''
+                            ? 'none'
+                            : dates[index].link)}
+                      </Typography>
+                    </div>
+                  ) : (
+                    <div />
+                  )
+                )
               ) : (
                 <Typography>
                   <i>This event has no calendar dates. Add one below.</i>
