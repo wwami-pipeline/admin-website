@@ -74,7 +74,8 @@ class SubProject extends React.Component {
     endDate,
     link,
     repeatStr,
-    weekArray
+    weekArray,
+    weekInterval
   ) => {
     let repeat = undefined;
     let neverRepeat = repeatStr === 'never';
@@ -108,18 +109,21 @@ class SubProject extends React.Component {
       return;
     }
 
-    startDate.setHours(startTime.getHours());
+    startDate.setHours(startTime.getHours() - 7);
     startDate.setMinutes(startTime.getMinutes());
 
     const rrule =
-      repeatStr === 'weekly'
+      repeat === RRule.WEEKLY
         ? new RRule({
             freq: repeat,
             byweekday: weekArray,
+            interval: weekInterval ?? 1,
             dtstart: startDate,
             until: endDateUsed,
           })
         : new RRule({ freq: repeat, dtstart: startDate, until: endDateUsed });
+
+    alert(rrule.toString());
 
     if (this.state.eventItems['Dates']) {
       const length = Object.keys(this.state.eventItems['Dates']).length;
@@ -128,6 +132,7 @@ class SubProject extends React.Component {
         duration,
         link,
         neverRepeat,
+        startTime: startTime.toTimeString().slice(0, 5),
       };
     } else {
       this.state.eventItems['Dates'] = {
@@ -136,6 +141,7 @@ class SubProject extends React.Component {
           duration,
           link,
           neverRepeat,
+          startTime: startTime.toTimeString().slice(0, 5),
         },
       };
     }

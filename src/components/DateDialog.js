@@ -61,6 +61,7 @@ class DateDialog extends React.Component {
       startDate: new Date(),
       startTime: new Date(),
       endDate: new Date(),
+      weekInterval: 1,
       duration: '1:00',
       link: '',
       repeat: 'never',
@@ -107,12 +108,11 @@ class DateDialog extends React.Component {
                         ? 'once on ' +
                           new Date(rrulestr(dates[index].rrule).all()[0])
                             .toISOString()
-                            .slice(0, 10) +
-                          ' at ' +
-                          new Date(rrulestr(dates[index].rrule).all()[0])
-                            .toTimeString()
-                            .slice(0, 5)
+                            .slice(0, 10)
                         : rrulestr(dates[index].rrule).toText()}
+                      {dates[index].startTime
+                        ? ', start time: ' + dates[index].startTime
+                        : ''}
                       , {'duration: ' + dates[index].duration},{' '}
                       {'sign-up link: ' +
                         (!dates[index].link || dates[index].link === ''
@@ -235,6 +235,43 @@ class DateDialog extends React.Component {
 
                   {this.state.repeat === 'weekly' ? (
                     <div>
+                      <div>
+                        <div style={{ display: 'inline-block' }}>
+                          <Typography>
+                            <b> Week Interval </b>
+                          </Typography>
+                          <Typography>
+                            <i>(Ex: 2 would repeat every 2 weeks)</i>
+                          </Typography>
+                        </div>
+                        <div
+                          style={{ display: 'inline-block', marginLeft: '1em' }}
+                        >
+                          <input
+                            type="number"
+                            style={{ width: 50 }}
+                            value={this.state.weekInterval}
+                            onChange={(evt) => {
+                              if (evt.target.value > 0) {
+                                this.setState({
+                                  weekInterval: evt.target.value,
+                                });
+                              }
+                            }}
+                          />
+                        </div>
+                      </div>
+                      <div style={{ marginTop: '1em', marginBottom: 5 }}>
+                        <Typography>
+                          <b>Repeat on</b>
+                        </Typography>
+                        <Typography>
+                          <i>
+                            Leave empty if you do not want to base repeat off of
+                            day of week
+                          </i>
+                        </Typography>
+                      </div>
                       <FormGroup row>
                         <FormControlLabel
                           control={
@@ -365,7 +402,8 @@ class DateDialog extends React.Component {
                       this.state.endDate,
                       this.state.link,
                       this.state.repeat,
-                      repeatDays
+                      repeatDays,
+                      this.state.weekInterval
                     );
                   } else {
                     alert('Invalid duration. Format: HH:MM');
