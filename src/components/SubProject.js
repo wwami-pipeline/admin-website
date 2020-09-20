@@ -81,7 +81,11 @@ class SubProject extends React.Component {
     let neverRepeat = repeatStr === 'never';
 
     let endDateUsed = endDate;
-    if (!startTime || !(startTime instanceof Date)) {
+    if (
+      !startTime ||
+      !(startTime instanceof Date) ||
+      isNaN(startTime.getTime())
+    ) {
       alert('Invalid start time');
       return;
     }
@@ -90,7 +94,7 @@ class SubProject extends React.Component {
       return;
     }
     if (repeatStr === 'never') {
-      endDateUsed = new Date(+new Date() + 86400000);
+      endDateUsed = new Date(+new Date(startDate) + 86400000);
       repeat = RRule.YEARLY;
     } else {
       if (repeatStr === 'daily') {
@@ -125,23 +129,29 @@ class SubProject extends React.Component {
 
     if (this.state.eventItems['Dates']) {
       const length = Object.keys(this.state.eventItems['Dates']).length;
-      this.state.eventItems['Dates'][length] = {
-        rrule: rrule.toString(),
-        duration,
-        link,
-        neverRepeat,
-        startTime: startTime.toTimeString().slice(0, 5),
-      };
-    } else {
-      this.state.eventItems['Dates'] = {
-        0: {
+      this.setState((prevState) => {
+        prevState.eventItems['Dates'][length] = {
           rrule: rrule.toString(),
           duration,
           link,
           neverRepeat,
           startTime: startTime.toTimeString().slice(0, 5),
-        },
-      };
+        };
+        return prevState;
+      });
+    } else {
+      this.setState((prevState) => {
+        prevState.eventItems['Dates'] = {
+          0: {
+            rrule: rrule.toString(),
+            duration,
+            link,
+            neverRepeat,
+            startTime: startTime.toTimeString().slice(0, 5),
+          },
+        };
+        return prevState;
+      });
     }
     console.log(this.state.eventItems);
     this.forceUpdate();
