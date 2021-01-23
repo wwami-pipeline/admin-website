@@ -72,11 +72,22 @@ class DateDialog extends React.Component {
       fChecked: false,
       saChecked: false,
       suChecked: false,
+      medicineChecked: false,
+      nursingChecked: false,
+      dentistryChecked: false,
+      pharmacyChecked: false,
+      socialWorkChecked: false,
+      publicHealthChecked: false,
+      medexChecked: false,
+      ptotChecked: false,
+      otherHealthSciencesGraduateStudentsChecked: false,
+      undergraduatesChecked: false,
     };
   }
 
   render() {
     const { classes, dates, removeDate, addDate } = this.props;
+
     return (
       <div>
         <Dialog
@@ -107,14 +118,14 @@ class DateDialog extends React.Component {
                       <Typography style={{ display: 'inline-block' }}>
                         {dates[index].neverRepeat
                           ? 'once on ' +
-                            new Date(
-                              rrulestr(dates[index].rrule)
-                                .all()[0]
-                                .toISOString()
-                                .slice(0, 10)
-                            )
+                          new Date(
+                            rrulestr(dates[index].rrule)
+                              .all()[0]
                               .toISOString()
                               .slice(0, 10)
+                          )
+                            .toISOString()
+                            .slice(0, 10)
                           : rrulestr(dates[index].rrule).toText()}
                         {dates[index].startTime
                           ? ', start time: ' + dates[index].startTime
@@ -123,18 +134,19 @@ class DateDialog extends React.Component {
                         {'sign-up link: ' +
                           (!dates[index].link || dates[index].link === ''
                             ? 'none'
-                            : dates[index].link)}
+                            : dates[index].link)},
+                            {'volunteer categories: ' + (Array.isArray(dates[index].volunteerCategories) ? dates[index].volunteerCategories.join(",") : "")}
                       </Typography>
                     </div>
                   ) : (
-                    <div />
-                  )
+                      <div />
+                    )
                 )
               ) : (
-                <Typography>
-                  <i>This event has no calendar dates. Add one below.</i>
-                </Typography>
-              )}
+                  <Typography>
+                    <i>This event has no calendar dates. Add one below.</i>
+                  </Typography>
+                )}
 
               <Divider />
 
@@ -199,6 +211,51 @@ class DateDialog extends React.Component {
                     }
                     style={{ marginLeft: '1em' }}
                   />
+
+                  {/* Volunteer Categories */}
+                  <Typography style={{ marginLeft: 5, marginTop: 10, marginBottom: 10 }}><b>Please select the types of volunteers that you are recruiting for this event.</b></Typography>
+                  <FormGroup row style={{ marginLeft: 12 }}>
+                    <FormControlLabel
+                      control={<Checkbox checked={this.state.medicineChecked} onChange={() => this.setState({ medicineChecked: !this.state.medicineChecked })} name="Medicine" />}
+                      label="Medicine"
+                    />
+                    <FormControlLabel
+                      control={<Checkbox checked={this.state.nursingChecked} onChange={() => this.setState({ nursingChecked: !this.state.nursingChecked })} name="Nursing" />}
+                      label="Nursing"
+                    />
+                    <FormControlLabel
+                      control={<Checkbox checked={this.state.dentistryChecked} onChange={() => this.setState({ dentistryChecked: !this.state.dentistryChecked })} name="Dentistry" />}
+                      label="Dentistry"
+                    />
+                    <FormControlLabel
+                      control={<Checkbox checked={this.state.pharmacyChecked} onChange={() => this.setState({ pharmacyChecked: !this.state.pharmacyChecked })} name="Pharmacy" />}
+                      label="Pharmacy"
+                    />
+                    <FormControlLabel
+                      control={<Checkbox checked={this.state.socialWorkChecked} onChange={() => this.setState({ socialWorkChecked: !this.state.socialWorkChecked })} name="Social Work" />}
+                      label="Social Work"
+                    />
+                    <FormControlLabel
+                      control={<Checkbox checked={this.state.publicHealthChecked} onChange={() => this.setState({ publicHealthChecked: !this.state.publicHealthChecked })} name="Public Health" />}
+                      label="Public Health"
+                    />
+                    <FormControlLabel
+                      control={<Checkbox checked={this.state.medexChecked} onChange={() => this.setState({ medexChecked: !this.state.medexChecked })} name="MEDEX" />}
+                      label="MEDEX"
+                    />
+                    <FormControlLabel
+                      control={<Checkbox checked={this.state.ptotChecked} onChange={() => this.setState({ ptotChecked: !this.state.ptotChecked })} name="PT/OT" />}
+                      label="PT/OT"
+                    />
+                    <FormControlLabel
+                      control={<Checkbox checked={this.state.otherHealthSciencesGraduateStudentsChecked} onChange={() => this.setState({ otherHealthSciencesGraduateStudentsChecked: !this.state.otherHealthSciencesGraduateStudentsChecked })} name="Other Health Sciences Graduate Students" />}
+                      label="Other Health Sciences Graduate Students"
+                    />
+                    <FormControlLabel
+                      control={<Checkbox checked={this.state.undergraduatesChecked} onChange={() => this.setState({ undergraduatesChecked: !this.state.undergraduatesChecked })} name="Undergraduates" />}
+                      label="Undergraduates"
+                    />
+                  </FormGroup>
 
                   <FormControl
                     className={classes.formControl}
@@ -383,12 +440,12 @@ class DateDialog extends React.Component {
                       </FormGroup>
                     </div>
                   ) : (
-                    <div />
-                  )}
+                      <div />
+                    )}
                 </div>
               ) : (
-                <div />
-              )}
+                  <div />
+                )}
 
               <Button
                 variant="contained"
@@ -404,6 +461,18 @@ class DateDialog extends React.Component {
                     if (this.state.saChecked) repeatDays.push(RRule.SA);
                     if (this.state.suChecked) repeatDays.push(RRule.SU);
 
+                    let volunteerCategories = [];
+                    if (this.state.medicineChecked) volunteerCategories.push("Medicine")
+                    if (this.state.nursingChecked) volunteerCategories.push("Nursing")
+                    if (this.state.dentistryChecked) volunteerCategories.push("Dentistry")
+                    if (this.state.pharmacyChecked) volunteerCategories.push("Pharmacy")
+                    if (this.state.socialWorkChecked) volunteerCategories.push("Social Work")
+                    if (this.state.publicHealthChecked) volunteerCategories.push("Public Health")
+                    if (this.state.medexChecked) volunteerCategories.push("MEDEX")
+                    if (this.state.ptotChecked) volunteerCategories.push("PT/OT")
+                    if (this.state.otherHealthSciencesGraduateStudentsChecked) volunteerCategories.push("Other Health Sciences Graduate Students")
+                    if (this.state.undergraduatesChecked) volunteerCategories.push("Undergraduates")
+
                     addDate(
                       this.state.startDate,
                       this.state.startTime,
@@ -411,8 +480,9 @@ class DateDialog extends React.Component {
                       this.state.endDate,
                       this.state.link,
                       this.state.repeat,
+                      this.state.weekInterval,
                       repeatDays,
-                      this.state.weekInterval
+                      volunteerCategories,
                     );
                   } else {
                     alert('Invalid duration. Format: HH:MM');

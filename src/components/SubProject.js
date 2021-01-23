@@ -74,8 +74,9 @@ class SubProject extends React.Component {
     endDate,
     link,
     repeatStr,
+    weekInterval,
     weekArray,
-    weekInterval
+    volunteerCategories
   ) => {
     let repeat = undefined;
     let neverRepeat = repeatStr === 'never';
@@ -136,6 +137,7 @@ class SubProject extends React.Component {
           link,
           neverRepeat,
           startTime: startTime.toTimeString().slice(0, 5),
+          volunteerCategories
         };
         return prevState;
       });
@@ -148,6 +150,7 @@ class SubProject extends React.Component {
             link,
             neverRepeat,
             startTime: startTime.toTimeString().slice(0, 5),
+            volunteerCategories
           },
         };
         return prevState;
