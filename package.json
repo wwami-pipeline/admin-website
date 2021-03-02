@@ -19,7 +19,8 @@
     "rrule": "2.6.4"
   },
   "devDependencies": {
-    "node-pre-gyp": "0.12.0"
+    "node-pre-gyp": "0.12.0",
+    "sortablejs": "^1.6.1"
   },
   "scripts": {
     "start": "react-scripts start",
